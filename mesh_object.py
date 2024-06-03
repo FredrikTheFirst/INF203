@@ -19,7 +19,7 @@ class cell_factory:
 
 class mesh():
     def __init__(self, mesh_file):
-        # registr the different types of cell (line and triangle)
+        # Register the different types of cell (line and triangle)
         factory = cell_factory()
         factory.register('line', line_cell)
         factory.register('triangle', triangle_cell)
