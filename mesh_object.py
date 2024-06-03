@@ -24,6 +24,8 @@ class mesh():
         factory.register('line', line_cell)
         factory.register('triangle', triangle_cell)
 
+print("Henlo Fredrik :D")
+
 
 
 
