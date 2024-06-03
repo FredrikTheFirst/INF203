@@ -2,7 +2,7 @@ import meshio
 
 
 class line_cell:
-    def __ init__(self):
+    def __init__(self):
         pass
 
 class triangle_cell:
@@ -21,7 +21,8 @@ class mesh():
     def __init__(self, mesh_file):
         # go through every instance
         factory = cell_factory()
-        factory.register()
+        factory.register('line', line_cell)
+        factory.register('triangle', triangle_cell)
 
 
 
