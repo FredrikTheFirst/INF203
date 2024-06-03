@@ -24,7 +24,9 @@ class mesh():
         factory.register('line', line_cell)
         factory.register('triangle', triangle_cell)
 
-
+        msh = meshio.read(mesh_file)
+        for cft in msh.cells:
+            
 
 
 
