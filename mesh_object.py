@@ -26,6 +26,13 @@ class mesh():
 
         msh = meshio.read(mesh_file)
         for cft in msh.cells:
+            pass
+
+
+print("Henlo Fredrik :D")
+
+
+
             
 
 
