@@ -19,6 +19,7 @@ class cell_factory:
 
 class mesh():
     def __init__(self, mesh_file):
+        # go through every instance
         factory = cell_factory()
         factory.register()
 
