@@ -72,8 +72,8 @@ class mesh():
             # Making the cell objects
             if is_important:
                 for cell in cft.data:
-                    coords = self._points[cell]
-                    cell_obj = factory(self._points[cell], cell_id, cft.type)
+
+                    cell_obj = factory(cell, cell_id, cft.type)
                     self._cells.append(cell_obj)
 
                     # Here commes some code that is just for simplicity
@@ -89,24 +89,23 @@ class mesh():
     
     def cell_area(self):
         for tri in self._triangles:
-            tri.find_area(self._points[tri])
+            tri.find_area(self._points[tri._points])
     
     def cell_midpoint(self):
         for tri in self._triangles:
-            tri.find_midpoint(self._points[tri])
+            tri.find_midpoint(self._points[tri._points])
 
-    # NOT done
     def find_neighbours(self):
         for prim_cell in self._cells:
             for neig_cell in self._cells:
-                match_point = 0
-                for i, prim_coord in enumerate(prim_cell._coords):
-                    for j, neig_coord in enumerate(neig_cell._coords):
-                        if i <= j and prim_coord.all() == neig_coord.all():
-                            match_point += 1
-                if match_point == 2:
-                    prim_cell.store_neighbours(neig_cell._cell_id)
-                    break
+                if prim_cell._cell_id != neig_cell._cell_id:
+                    match_point = 0
+                    for prim_point in prim_cell._points:
+                        for neig_point in neig_cell._points:
+                            if prim_point == neig_point:
+                                match_point += 1
+                    if match_point == 2:
+                        prim_cell.store_neighbours(neig_cell._cell_id)
 
                         
         
@@ -120,3 +119,7 @@ class mesh():
 mesh_file = 'simple_mesh.msh'  # Going to test the classes mesh, triangle_cell and line_cell with "simple_mesh.msh" 
 
 msh = mesh(mesh_file)
+msh.find_neighbours()
+
+msh.cell_area()
+msh.cell_midpoint()
