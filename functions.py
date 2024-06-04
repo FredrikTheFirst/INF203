@@ -38,7 +38,7 @@ def nvector(v1, v2, mid):
 
 
 def vvector(v1, v2, mid):
-    e = v1 - v1
+    e = v2 - v1
     nn = M @ e
     pl = v1 - mid + v2 - mid
     if nn @ pl > 0:
@@ -47,18 +47,17 @@ def vvector(v1, v2, mid):
         return -nn
 
 
-def morevectors(coords, mid, func):
-    coords = coords.tolist()
-    print(coords)
+def morevectors(coords, func):
+    coordlist = coords.tolist()
     vectorset = []
-    for i, item in enumerate(coords):
+    for i, item in enumerate(coordlist):
         pair = [item]
-        coords.pop(i)
-        for vector in coords:
+        coordlist.pop(i)
+        for vector in coordlist:
             pair.append(vector)
             vectorset.append(pair)
             pair = [item]
     nlist = []
     for item in vectorset:
-        nlist.append(func(item[0], item[1], mid))
+        nlist.append(func(np.array(item[0]), np.array(item[1]), midpoint(coords)))
     return nlist
