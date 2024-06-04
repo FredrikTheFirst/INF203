@@ -21,6 +21,10 @@ class triangle_cell:
     def find_mid(self):
         pass
 
+    def find_neighbours(self):
+        pass
+
+
 
 class cell_factory:
     def __init__(self) -> None:
@@ -68,6 +72,14 @@ class mesh():
     
     def cell_area(self):
         for cell in self._cells:
+            """
+            try:
+                cell.find_area()
+            except:
+                pass
+            else:
+                pass
+            """
             pass
         
 
