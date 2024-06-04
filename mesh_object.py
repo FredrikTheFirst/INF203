@@ -12,6 +12,12 @@ class triangle_cell:
         self._cell_id = cell_id
         self._coords = coords
 
+    def find_area(self):
+        pass
+
+    def find_mid(self):
+        pass
+
 
 class cell_factory:
     def __init__(self) -> None:
@@ -56,6 +62,11 @@ class mesh():
                     coords = self._points[cell]
                     self._cells.append(factory(coords, cell_id, cft.type))
                     cell_id += 1
+    
+    def cell_area(self):
+        for cell in self._cells:
+            try:
+                pass
         
 
 
