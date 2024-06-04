@@ -17,19 +17,40 @@ class cell_factory:
     def register(self, key, name):
         self._cell_types[key] = name
 
+    def __call__(self, cft):
+        pass
+
+
 class mesh():
     def __init__(self, mesh_file):
         # Register the different types of cell (line and triangle)
         factory = cell_factory()
-        factory.register('line', line_cell)
-        factory.register('triangle', triangle_cell)
+
+        important_cells = ['line', 'triangle']
+
+        for imp_cell in important_cells:
+            factory.register(imp_cell, exec(imp_cell+'_cell'))
+        
+
+        self._cells = []
 
         msh = meshio.read(mesh_file)
         for cft in msh.cells:
-            pass
+            # Checking if the cell type is a line or triangle
+            is_important = False
+            for imp_cell in important_cells:
+                if cft.type == imp_cell:
+                    is_important = True
+            
+            # Dont know how to call all cells of a type.
+            # Need another for loop
+            if is_important:
+                self._cells.append(factory(cft))
 
 
-print("Henlo Fredrik :D")
+                
+
+
 
 
 
