@@ -68,8 +68,7 @@ class mesh():
     
     def cell_area(self):
         for cell in self._cells:
-            try:
-                pass
+            pass
         
 
 
