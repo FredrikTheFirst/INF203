@@ -54,7 +54,9 @@ class mesh():
         msh = meshio.read(mesh_file)
 
         self._cells = []
-        self._points = msh.points
+
+
+        self._points = np.array([np.array(point[0:2]) for point in msh.points])
 
         cell_id = 0
 
