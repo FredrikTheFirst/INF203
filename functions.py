@@ -37,18 +37,17 @@ def nvector(v1, v2, mid):
         return -nn
 
 
-def vvector(line, mid):
-    e = line[1] - line[0]
+def vvector(v1, v2, mid):
+    e = v1 - v1
     nn = M @ e
-    pl = v2 - mid + v1 - mid
+    pl = v1 - mid + v2 - mid
     if nn @ pl > 0:
         return nn
     else:
         return -nn
 
 
-#IKKE FERDIG
-def nvectors(coords):
+def morevectors(coords, mid, func):
     coords = coords.tolist()
     print(coords)
     vectorset = []
@@ -59,3 +58,7 @@ def nvectors(coords):
             pair.append(vector)
             vectorset.append(pair)
             pair = [item]
+    nlist = []
+    for item in vectorset:
+        nlist.append(func(item[0], item[1], mid))
+    return nlist
