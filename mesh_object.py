@@ -4,23 +4,28 @@ from functions import A, midpoint
 
 
 class line_cell:
-    def __init__(self, cell_id, coords):
+    def __init__(self, cell_id, points):
         self._cell_id = cell_id
-        self._coords = coords
+        self._points = points
+        self._neighbours = []
+    
+    def store_neighbours(self, neig_id):
+        self._neighbours.append(neig_id)
 
 class triangle_cell:
-    def __init__(self, cell_id, coords):
+    def __init__(self, cell_id, points):
         self._cell_id = cell_id
-        self._coords = coords
+        self._points = points
+        self._neighbours = []
 
-    def find_area(self):
-        self._area = A(self._coords)
+    def find_area(self, coords):
+        self._area = A(coords)
 
-    def find_midpoint(self):
-        self._midpoint = midpoint(self._coords)
+    def find_midpoint(self, coords):
+        self._midpoint = midpoint(coords)
 
-    def find_neighbours(self):
-        pass
+    def store_neighbours(self, neig_id):
+        self._neighbours.append(neig_id)
 
 
 
@@ -68,7 +73,7 @@ class mesh():
             if is_important:
                 for cell in cft.data:
                     coords = self._points[cell]
-                    cell_obj = factory(coords, cell_id, cft.type)
+                    cell_obj = factory(self._points[cell], cell_id, cft.type)
                     self._cells.append(cell_obj)
 
                     # Here commes some code that is just for simplisety
@@ -84,11 +89,26 @@ class mesh():
     
     def cell_area(self):
         for tri in self._triangles:
-            tri.find_area()
+            tri.find_area(self._points[tri])
     
     def cell_midpoint(self):
         for tri in self._triangles:
-            tri.find_midpoint()
+            tri.find_midpoint(self._points[tri])
+
+    # NOT done
+    def find_neighbours(self):
+        for prim_cell in self._cells:
+            for neig_cell in self._cells:
+                match_point = 0
+                for i, prim_coord in enumerate(prim_cell._coords):
+                    for j, neig_coord in enumerate(neig_cell._coords):
+                        if i <= j and prim_coord.all() == neig_coord.all():
+                            match_point += 1
+                if match_point == 2:
+                    prim_cell.store_neighbours(neig_cell._cell_id)
+                    break
+
+                        
         
 
 
@@ -97,6 +117,6 @@ class mesh():
 
 
 
-mesh_file = 'bay.msh'  # Going to test the classes mesh, triangle_cell and line_cell with "bay.mesh" 
+mesh_file = 'simple_mesh.msh'  # Going to test the classes mesh, triangle_cell and line_cell with "simple_mesh.msh" 
 
 msh = mesh(mesh_file)
