@@ -11,6 +11,8 @@ class triangle_cell:
     def __init__(self, cell_id, coords):
         self._cell_id = cell_id
         self._coords = coords
+        self._area = A(coords)
+        self._midpoint = 1/3 * np.sum(coords)
 
     def find_area(self):
         pass

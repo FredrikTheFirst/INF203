@@ -10,8 +10,8 @@ def g(a, b, v, u):
     else:
         return b * dot
     
-def A(corner1, corner2, corner3):
-    a, b, c = np.array(corner1), np.array(corner2), np.array(corner3)
+def A(coords):
+    a, b, c = np.array(coords[0][0:1]), np.array(coords[1][0:1]), np.array(coords[2][0:1])
     v1 = b - a
     v2 = c - a
     return 0.5 * abs(np.cross(v1, v2))
