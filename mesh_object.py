@@ -35,6 +35,9 @@ class mesh():
         self._cells = []
 
         msh = meshio.read(mesh_file)
+
+        self._points = msh.points
+
         for cft in msh.cells:
             # Checking if the cell type is a line or triangle
             is_important = False
