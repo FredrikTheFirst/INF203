@@ -17,8 +17,4 @@ def A(coords):
     return 0.5 * abs(np.cross(v1, v2))
 
 def midpoint(coords):
-<<<<<<< HEAD
-    return 1/3 * np.array(sum([point for point in coords]))
-=======
     return 1/3 * sum(coords)
->>>>>>> d51e592706cc2b67be479feda891e4535e20783d
