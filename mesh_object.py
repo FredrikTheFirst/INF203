@@ -1,5 +1,6 @@
 import meshio
 import numpy as np
+from functions import A
 
 
 class line_cell:
