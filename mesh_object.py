@@ -76,7 +76,7 @@ class mesh():
                     cell_obj = factory(self._points[cell], cell_id, cft.type)
                     self._cells.append(cell_obj)
 
-                    # Here commes some code that is just for simplisety
+                    # Here commes some code that is just for simplicity
                     if cft.type == 'line':
                         self._lines.append(cell_obj)
                     
