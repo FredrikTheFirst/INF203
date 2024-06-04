@@ -9,3 +9,9 @@ def g(a, b, v, u):
         return a * dot
     else:
         return b * dot
+    
+def A(a, b, c):
+    a, b, c = np.array(a), np.array(b), np.array(c)
+    v1 = b - a
+    v2 = c - a
+    return 0.5 * abs(np.cross(v1, v2))
