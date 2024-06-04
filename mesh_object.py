@@ -2,12 +2,14 @@ import meshio
 
 
 class line_cell:
-    def __init__(self):
-        pass
+    def __init__(self, cell_id, points):
+        self._cell_id
+        self._points = points
 
 class triangle_cell:
-    def __init__(self):
-        pass
+    def __init__(self, cell_id, points):
+        self._cell_id
+        self._points = points
 
 
 class cell_factory:
@@ -17,8 +19,8 @@ class cell_factory:
     def register(self, key, name):
         self._cell_types[key] = name
 
-    def __call__(self, cft):
-        pass
+    def __call__(self, cell, cell_id, celltype):
+        self._cell_types[celltype](cell_id, cell)
 
 
 class mesh():
@@ -27,16 +29,16 @@ class mesh():
         factory = cell_factory()
 
         important_cells = ['line', 'triangle']
-
         for imp_cell in important_cells:
             factory.register(imp_cell, exec(imp_cell+'_cell'))
         
 
-        self._cells = []
-
         msh = meshio.read(mesh_file)
 
+        self._cells = []
         self._points = msh.points
+
+        cell_id = 0
 
         for cft in msh.cells:
             # Checking if the cell type is a line or triangle
@@ -45,10 +47,11 @@ class mesh():
                 if cft.type == imp_cell:
                     is_important = True
             
-            # Dont know how to call all cells of a type.
-            # Need another for loop
+            # Making the cell objects
             if is_important:
-                self._cells.append(factory(cft))
+                for cell in cft.data:
+                    self._cells.append(factory(cell, cell_id, cft.type))
+                    cell_id += 1
 
 
                 
