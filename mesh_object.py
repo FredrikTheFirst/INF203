@@ -1,15 +1,16 @@
 import meshio
+import numpy as np
 
 
 class line_cell:
-    def __init__(self, cell_id, points):
-        self._cell_id
-        self._points = points
+    def __init__(self, cell_id, coords):
+        self._cell_id = cell_id
+        self._coords = coords
 
 class triangle_cell:
-    def __init__(self, cell_id, points):
-        self._cell_id
-        self._points = points
+    def __init__(self, cell_id, coords):
+        self._cell_id = cell_id
+        self._coords = coords
 
 
 class cell_factory:
@@ -20,7 +21,8 @@ class cell_factory:
         self._cell_types[key] = name
 
     def __call__(self, cell, cell_id, celltype):
-        self._cell_types[celltype](cell_id, cell)
+        denne_cellen = self._cell_types[celltype](cell_id, cell)
+        return denne_cellen
 
 
 class mesh():
@@ -30,7 +32,7 @@ class mesh():
 
         important_cells = ['line', 'triangle']
         for imp_cell in important_cells:
-            factory.register(imp_cell, exec(imp_cell+'_cell'))
+            factory.register(imp_cell, eval(imp_cell+'_cell'))
         
 
         msh = meshio.read(mesh_file)
@@ -40,6 +42,7 @@ class mesh():
 
         cell_id = 0
 
+        
         for cft in msh.cells:
             # Checking if the cell type is a line or triangle
             is_important = False
@@ -50,13 +53,10 @@ class mesh():
             # Making the cell objects
             if is_important:
                 for cell in cft.data:
-                    self._cells.append(factory(cell, cell_id, cft.type))
+                    coords = self._points[cell]
+                    self._cells.append(factory(coords, cell_id, cft.type))
                     cell_id += 1
-
-
-                
-
-
+        
 
 
 
