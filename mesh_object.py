@@ -1,6 +1,6 @@
 import meshio
 import numpy as np
-from functions import A
+from functions import A, midpoint
 
 
 class line_cell:
@@ -12,14 +12,12 @@ class triangle_cell:
     def __init__(self, cell_id, coords):
         self._cell_id = cell_id
         self._coords = coords
-        self._area = A(coords)
-        self._midpoint = 1/3 * np.sum(coords)
 
     def find_area(self):
-        pass
+        self._area = A(self._coords)
 
-    def find_mid(self):
-        pass
+    def find_midpoint(self):
+        self._midpoint = midpoint(self._coords)
 
     def find_neighbours(self):
         pass
@@ -55,7 +53,10 @@ class mesh():
 
         cell_id = 0
 
-        
+        self._lines = []
+        self._triangles = []
+
+
         for cft in msh.cells:
             # Checking if the cell type is a line or triangle
             is_important = False
@@ -67,20 +68,27 @@ class mesh():
             if is_important:
                 for cell in cft.data:
                     coords = self._points[cell]
-                    self._cells.append(factory(coords, cell_id, cft.type))
+                    cell_obj = factory(coords, cell_id, cft.type)
+                    self._cells.append(cell_obj)
+
+                    # Here commes some code that is just for simplisety
+                    if cft.type == 'line':
+                        self._lines.append(cell_obj)
+                    
+                    elif cft.type == 'triangle':
+                        self._triangles.append(cell_obj)
+                    
+
+
                     cell_id += 1
     
     def cell_area(self):
-        for cell in self._cells:
-            """
-            try:
-                cell.find_area()
-            except:
-                pass
-            else:
-                pass
-            """
-            pass
+        for tri in self._triangles:
+            tri.find_area()
+    
+    def cell_midpoint(self):
+        for tri in self._triangles:
+            tri.find_midpoint()
         
 
 

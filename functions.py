@@ -15,3 +15,6 @@ def A(coords):
     v1 = b - a
     v2 = c - a
     return 0.5 * abs(np.cross(v1, v2))
+
+def midpoint(coords):
+    return sum([point for point in coords])
