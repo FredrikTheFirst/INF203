@@ -58,7 +58,8 @@ class mesh():
 
         self._points = np.array([np.array(point[0:2]) for point in msh.points])
 
-        cell_id = 0
+        line_id = 0
+        tri_id = 0
 
         self._lines = []
         self._triangles = []
@@ -81,13 +82,11 @@ class mesh():
                     # Here commes some code that is just for simplicity
                     if cft.type == 'line':
                         self._lines.append(cell_obj)
+                        line_id += 1
                     
                     elif cft.type == 'triangle':
                         self._triangles.append(cell_obj)
-                    
-
-
-                    cell_id += 1
+                        tri_id += 1
     
     def cell_area(self):
         for tri in self._triangles:
