@@ -64,4 +64,4 @@ def morevectors(coords, func):
 
 
 def starting_amount(x_mid, x):
-    return np.exp(-np.linalg.norm(x - x_mid) / 0.01)
+    return np.exp(-np.linalg.norm(x - x_mid)**2 / 0.01)
