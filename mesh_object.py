@@ -10,7 +10,12 @@ class line_cell:
         self._neighbours = []
     
     def store_neighbours(self, neig_id):
-        self._neighbours.append(neig_id)
+        my_points = set(self._points)
+        for cell in enumerate(cells):
+            matches = my_points & set(cell._points)
+
+            if len(matches) == 2:
+                self._neighbours.append(cell._cell_id)
 
 class triangle_cell:
     def __init__(self, cell_id, points):
@@ -24,8 +29,14 @@ class triangle_cell:
     def find_midpoint(self, coords):
         self._midpoint = midpoint(coords)
 
-    def store_neighbours(self, neig_id):
-        self._neighbours.append(neig_id)
+    def store_neighbours(self, cells):
+        my_points = set(self._points)
+        for cell in enumerate(cells):
+            matches = my_points & set(cell._points)
+
+            if len(matches) == 2:
+                self._neighbours.append(cell._cell_id)
+
 
 
 
@@ -76,17 +87,20 @@ class mesh():
             if is_important:
                 for cell in cft.data:
 
-                    cell_obj = factory(cell, cell_id, cft.type)
-                    self._cells.append(cell_obj)
-
+                    
                     # Here commes some code that is just for simplicity
                     if cft.type == 'line':
+                        cell_obj = factory(cell, line_id, cft.type)
                         self._lines.append(cell_obj)
                         line_id += 1
                     
                     elif cft.type == 'triangle':
+                        cell_obj = factory(cell, tri_id, cft.type)
                         self._triangles.append(cell_obj)
                         tri_id += 1
+                    
+                    self._cells.append(cell_obj)
+                    
     
     def cell_area(self):
         for tri in self._triangles:
@@ -97,13 +111,5 @@ class mesh():
             tri.find_midpoint(self._points[tri._points])
 
     def find_neighbours(self):
-        for prim_cell in self._cells:
-            for neig_cell in self._cells:
-                if prim_cell._cell_id != neig_cell._cell_id:
-                    match_point = 0
-                    for prim_point in prim_cell._points:
-                        for neig_point in neig_cell._points:
-                            if prim_point == neig_point:
-                                match_point += 1
-                    if match_point == 2:
-                        prim_cell.store_neighbours(neig_cell._cell_id)
+        for cell in self._cells:
+            cell.store_neighbours(self._cells)
