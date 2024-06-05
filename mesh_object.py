@@ -9,6 +9,7 @@ class line_cell:
         self._points = points
         self._neighbours = []
     
+    # Dosnt use it at the moment
     def store_neighbours(self, cells):
         my_points = set(self._points)
         for cell in enumerate(cells):
@@ -29,13 +30,14 @@ class triangle_cell:
     def find_midpoint(self, coords):
         self._midpoint = midpoint(coords)
 
-    def store_neighbours(self, cells):
+    
+    def store_neighbours(self, triangels):
         my_points = set(self._points)
-        for cell in enumerate(cells):
-            matches = my_points & set(cell._points)
+        for tri in enumerate(triangels):
+            matches = my_points & set(tri._points)
 
             if len(matches) == 2:
-                self._neighbours.append(cell._cell_id)
+                self._neighbours.append(tri._cell_id)
 
 
 
@@ -111,5 +113,5 @@ class mesh():
             tri.find_midpoint(self._points[tri._points])
 
     def find_neighbours(self):
-        for cell in self._cells:
-            cell.store_neighbours(self._cells)
+        for tri in self._triangles:
+            tri.store_neighbours(self._triangles)
