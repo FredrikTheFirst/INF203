@@ -9,7 +9,7 @@ class line_cell:
         self._points = points
         self._neighbours = []
     
-    def store_neighbours(self, neig_id):
+    def store_neighbours(self, cells):
         my_points = set(self._points)
         for cell in enumerate(cells):
             matches = my_points & set(cell._points)
@@ -100,7 +100,7 @@ class mesh():
                         tri_id += 1
                     
                     self._cells.append(cell_obj)
-                    
+
     
     def cell_area(self):
         for tri in self._triangles:
