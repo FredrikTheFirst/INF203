@@ -33,7 +33,7 @@ class triangle_cell:
     
     def store_neighbours(self, triangels):
         my_points = set(self._points)
-        for tri in enumerate(triangels):
+        for tri in triangels:
             matches = my_points & set(tri._points)
 
             if len(matches) == 2:
