@@ -1,3 +1,4 @@
 meshio
 numpy
 matplotlib.pyplot
+opencv-python
