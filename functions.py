@@ -61,3 +61,7 @@ def morevectors(coords, func):
     for item in vectorset:
         nlist.append(func(np.array(item[0]), np.array(item[1]), midpoint(coords)))
     return nlist
+
+
+def starting_amount(x_mid, x):
+    return np.exp(-np.linalg.norm(x - x_mid) / 0.01)
