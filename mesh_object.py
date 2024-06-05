@@ -7,7 +7,7 @@ class line_cell:
     def __init__(self, cell_id, points):
         self._cell_id = cell_id
         self._points = points
-        self._neighbours = []
+        self._neighbours = np.array([])
     
     # Dosnt use it at the moment
     def store_neighbours(self, cells):
@@ -16,13 +16,13 @@ class line_cell:
             matches = my_points & set(cell._points)
 
             if len(matches) == 2:
-                self._neighbours.append(cell._cell_id)
+                self._neighbours = np.append(self._neighbours, cell._cell_id)
 
 class triangle_cell:
     def __init__(self, cell_id, points):
         self._cell_id = cell_id
         self._points = points
-        self._neighbours = []
+        self._neighbours = np.array([])
 
     def find_area(self, coords):
         self._area = A(coords)
@@ -37,7 +37,7 @@ class triangle_cell:
             matches = my_points & set(tri._points)
 
             if len(matches) == 2:
-                self._neighbours.append(tri._cell_id)
+                self._neighbours = np.append(self._neighbours, tri._cell_id)
 
 
 
