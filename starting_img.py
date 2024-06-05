@@ -6,11 +6,27 @@ from mesh_object import *
 mesh_file = 'bay.msh'
 msh = mesh(mesh_file)
 msh.cell_midpoint()
+msh.cell_area()
+msh.find_neighbours()
+
+#%%
+
 
 x_mid = np.array([0.5, 0.5])
+vfelt = np.array([fc.v(tri._midpoint) for tri in msh._triangles])
+Afelt = np.array([tri._area for tri in msh._triangles])
+nufelt = np.array([fc.morevectors(np.array([]), ) for tri in msh._triangles])
 
+dt = 0.5
 
 u = np.array([fc.starting_amount(x_mid, tri._midpoint) for tri in msh._triangles])
+ungh = np.array([[fc.starting_amount(x_mid, mid) for mid in tri._neighbours] for tri in msh._triangles])
+F = []
+for tri, tri_oil in zip(msh._triangles, u):
+    for neigh_oil, nu in zip(ungh, nufelt):
+        F.append(fc.dOil(dt, tri._area, fc.g(tri_oil, )))
+
+#u2 = u + sum([fc.dOil(dt, Afelt, fc.g(u, u_ngh, vfelt, nu)) for u_ngh, nu in zip(ungh, nufelt)])
 
 # u = np.array([0.0, 1.0])
 

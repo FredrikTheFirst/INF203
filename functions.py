@@ -1,10 +1,12 @@
 import numpy as np
 
 
+#finner hastighet i et punkt (midtpunkt)
 def v(x):
     return np.array([x[1] - 0.2*x[0], -x[0]])
 
 
+#g-funksjonen
 def g(a, b, v, u):
     dot = np.array(v) @ np.array(u)
     if dot > 0:
@@ -13,6 +15,7 @@ def g(a, b, v, u):
         return b * dot
 
 
+#finner areal
 def A(coords):
     a, b, c = np.array(coords[0]), np.array(coords[1]), np.array(coords[2])
     v1 = b - a
@@ -20,10 +23,12 @@ def A(coords):
     return 0.5 * abs(np.cross(v1, v2))
 
 
+#finner midtpunkt
 def midpoint(coords):
     return 1/3 * sum(coords)
 
 
+#90 graders rotasjonsmatrise
 M = np.array([[0, -1], [1, 0]])
 
 
@@ -37,7 +42,7 @@ def nvector(v1, v2, mid):
         return -nn
 
 
-def vvector(v1, v2, mid):
+def nuvector(v1, v2, mid):
     e = v2 - v1
     nn = M @ e
     pl = v1 - mid + v2 - mid
@@ -60,8 +65,14 @@ def morevectors(coords, func):
     nlist = []
     for item in vectorset:
         nlist.append(func(np.array(item[0]), np.array(item[1]), midpoint(coords)))
-    return nlist
+    return np.array(nlist)
 
 
 def starting_amount(x_mid, x):
     return np.exp(-np.linalg.norm(x - x_mid)**2 / 0.01)
+
+def dOil(dt, A, g):
+    return -dt/A * g
+
+def Un1(u1, F1, F2, F3):
+    return u1 + F1 + F2 + F3
