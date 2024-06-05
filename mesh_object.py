@@ -108,5 +108,3 @@ class mesh():
                                 match_point += 1
                     if match_point == 2:
                         prim_cell.store_neighbours(neig_cell._cell_id)
-
-                        
