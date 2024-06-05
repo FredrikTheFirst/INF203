@@ -9,22 +9,39 @@ msh.cell_midpoint()
 msh.cell_area()
 msh.find_neighbours()
 
-#%%
 
 
 x_mid = np.array([0.5, 0.5])
 vfelt = np.array([fc.v(tri._midpoint) for tri in msh._triangles])
 Afelt = np.array([tri._area for tri in msh._triangles])
-nufelt = np.array([fc.morevectors(np.array([]), ) for tri in msh._triangles])
+#nufelt = np.array([fc.morevectors(np.array(), fc.nuvector) for neighbour in tri._neighbours] for tri in msh._triangles])
 
 dt = 0.5
 
 u = np.array([fc.starting_amount(x_mid, tri._midpoint) for tri in msh._triangles])
 ungh = np.array([[fc.starting_amount(x_mid, mid) for mid in tri._neighbours] for tri in msh._triangles])
-F = []
-for tri, tri_oil in zip(msh._triangles, u):
-    for neigh_oil, nu in zip(ungh, nufelt):
-        F.append(fc.dOil(dt, tri._area, fc.g(tri_oil, )))
+Fsumlist = []
+for tri in msh._triangles:
+    u_old = u[tri._cell_id]
+    tri_v = vfelt[tri._cell_id]
+    Flist = []
+    for neigh in tri._neighbours:
+        neigh = msh._triangles[neigh]
+        print(tri._points)
+        print(neigh._points)
+        matching_points = set(tri._points) & set(neigh._points)
+        print(matching_points)
+        matching_coords = np.array(msh._points[matching_points])
+        nu = fc.nuvector(matching_coords[0], matching_coords[1], tri._midpoint)
+        u_old_neigh = u[neigh._cell_id]
+        F = fc.dOil(dt, tri._area, g((u_old, u_old_neigh, tri_v, nu)))
+        Flist.append(F)
+    sum(Flist)
+    Fsumlist.append(Flist)
+
+u2 = np.array([sum(e) for e in zip(u, Fsumlist)])
+
+
 
 #u2 = u + sum([fc.dOil(dt, Afelt, fc.g(u, u_ngh, vfelt, nu)) for u_ngh, nu in zip(ungh, nufelt)])
 
