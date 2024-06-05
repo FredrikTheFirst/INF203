@@ -34,7 +34,7 @@ def ufunc(u):
             matching_coords = np.array([msh._points[point] for point in matching_points])
             nu = fc.nuvector(matching_coords[0], matching_coords[1], tri._midpoint)
             u_old_neigh = u[neigh._cell_id]
-            F = fc.dOil(dt, tri._area, fc.g(u_old, u_old_neigh, tri_v, nu))
+            F = fc.dOil(dt, tri._area, fc.g(u_old, u_old_neigh, 0.5*(tri_v+fc.v(neigh._midpoint)), nu))
             Flist.append(F)
         Fsumlist.append(u_old + sum(Flist))
     return np.array(Fsumlist)
