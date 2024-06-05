@@ -31,7 +31,7 @@ def midpoint(coords):
 #90 graders rotasjonsmatrise
 M = np.array([[0, -1], [1, 0]])
 
-
+#n-vector funksjon, tar to koordinater og et triangelmidtpunkt, lager en ortonormal vektor på linja
 def nvector(v1, v2, mid):
     e = v2 - v1
     nn = M @ e / np.linalg.norm(e)
@@ -42,6 +42,7 @@ def nvector(v1, v2, mid):
         return -nn
 
 
+#n-vector funksjon, tar to koordinater og et triangelmidtpunkt, lager en ortogonal vektor på linja med samme lengde som linja
 def nuvector(v1, v2, mid):
     e = v2 - v1
     nn = M @ e
@@ -51,7 +52,7 @@ def nuvector(v1, v2, mid):
     else:
         return -nn
 
-
+#tar koordinater til hjørnene på en trekant og gir tilbake en liste med normalvektorer på hver av kantene (ubrukelig?)
 def morevectors(coords, func):
     coordlist = coords.tolist()
     vectorset = []
@@ -67,12 +68,10 @@ def morevectors(coords, func):
         nlist.append(func(np.array(item[0]), np.array(item[1]), midpoint(coords)))
     return np.array(nlist)
 
-
+#danner startolja til hver celle
 def starting_amount(x_mid, x):
     return np.exp(-np.linalg.norm(x - x_mid)**2 / 0.01)
 
+#regner ut endringen av olje i en celle
 def dOil(dt, A, g):
     return -dt/A * g
-
-def Un1(u1, F1, F2, F3):
-    return u1 + F1 + F2 + F3

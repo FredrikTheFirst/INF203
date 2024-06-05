@@ -14,36 +14,36 @@ msh.find_neighbours()
 x_mid = np.array([0.5, 0.5])
 vfelt = np.array([fc.v(tri._midpoint) for tri in msh._triangles])
 Afelt = np.array([tri._area for tri in msh._triangles])
-#nufelt = np.array([fc.morevectors(np.array(), fc.nuvector) for neighbour in tri._neighbours] for tri in msh._triangles])
 
 dt = 0.05
 
 u = np.array([fc.starting_amount(x_mid, tri._midpoint) for tri in msh._triangles])
-# ungh = np.array([[fc.starting_amount(x_mid, msh._triangles[int(neigh)]._midpoint) for neigh in tri._neighbours] for tri in msh._triangles])
-Fsumlist = []
-for tri in msh._triangles:
-    u_old = u[tri._cell_id]
-    tri_v = vfelt[tri._cell_id]
-    Flist = []
-    for neigh in tri._neighbours:
-        neigh = msh._triangles[int(neigh)]
-        print(tri._points)
-        print(neigh._points)
-        matching_points = set(tri._points) & set(neigh._points)
-        print(matching_points)
-        matching_coords = np.array([msh._points[point] for point in matching_points])
-        nu = fc.nuvector(matching_coords[0], matching_coords[1], tri._midpoint)
-        u_old_neigh = u[neigh._cell_id]
-        F = fc.dOil(dt, tri._area, fc.g(u_old, u_old_neigh, tri_v, nu))
-        Flist.append(F)
-    sum(Flist)
-    Fsumlist.append(Flist)
 
-u2 = np.array([u_old + np.sum(flux) for u_old, flux in zip(u, Fsumlist)])
+def ufunc(u):
+    Fsumlist = []
+    for tri in msh._triangles:
+        u_old = u[tri._cell_id]
+        tri_v = vfelt[tri._cell_id]
+        Flist = []
+        for neigh in tri._neighbours:
+            neigh = msh._triangles[int(neigh)]
+            #print(tri._points)
+            #print(neigh._points)
+            matching_points = set(tri._points) & set(neigh._points)
+            #print(matching_points)
+            matching_coords = np.array([msh._points[point] for point in matching_points])
+            nu = fc.nuvector(matching_coords[0], matching_coords[1], tri._midpoint)
+            u_old_neigh = u[neigh._cell_id]
+            F = fc.dOil(dt, tri._area, fc.g(u_old, u_old_neigh, tri_v, nu))
+            Flist.append(F)
+        Fsumlist.append(u_old + sum(Flist))
+    return np.array(Fsumlist)
 
-
-
-#u2 = u + sum([fc.dOil(dt, Afelt, fc.g(u, u_ngh, vfelt, nu)) for u_ngh, nu in zip(ungh, nufelt)])
+def ulist(n):
+    ulist = [u]
+    for i in range(n):
+        ulist.append(ufunc(ulist[-1]))
+    return tuple(ulist)
 
 # u = np.array([0.0, 1.0])
 
@@ -52,7 +52,7 @@ u2 = np.array([u_old + np.sum(flux) for u_old, flux in zip(u, Fsumlist)])
 
 # Plot the mesh by adding all triangles with their value
 
-for i, el in enumerate((u, u2)):
+for i, el in enumerate(ulist(8)):
     plt.figure()
 
 
