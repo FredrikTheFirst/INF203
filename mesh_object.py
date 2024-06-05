@@ -110,18 +110,3 @@ class mesh():
                         prim_cell.store_neighbours(neig_cell._cell_id)
 
                         
-        
-
-
-
-            
-
-
-
-mesh_file = 'simple_mesh.msh'  # Going to test the classes mesh, triangle_cell and line_cell with "simple_mesh.msh" 
-
-msh = mesh(mesh_file)
-msh.find_neighbours()
-
-msh.cell_area()
-msh.cell_midpoint()
