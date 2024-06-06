@@ -1,28 +1,43 @@
 import meshio
 import numpy as np
-from functions import A, midpoint
+from abc import ABC, abstractmethod
+from functions import *
 
 
-class line_cell:
+
+class Cell(ABC):
     def __init__(self, cell_id, points):
         self._cell_id = cell_id
         self._points = points
         self._neighbours = np.array([])
+
+class Line_cell:
+    def __init__(self, cell_id, type_id, points):
+        self._cell_id = cell_id
+        self._line_id = type_id
+        self._points = points
+        self._neighbours_id = np.array([])
     
-    # Dosnt use it at the moment
+    def find_midpoint(self, coords):
+        self._midpoint = midpoint(coords)
+    
     def store_neighbours(self, cells):
         my_points = set(self._points)
-        for cell in enumerate(cells):
+        neighbours_id = []
+        for cell in cells:
             matches = my_points & set(cell._points)
 
             if len(matches) == 2:
-                self._neighbours = np.append(self._neighbours, cell._cell_id)
+                neighbours_id.append(cell._cell_id)
+        
+        self._neighbours_id = np.array(neighbours_id)
 
-class triangle_cell:
-    def __init__(self, cell_id, points):
+class Triangle_cell:
+    def __init__(self, cell_id, type_id, points):
         self._cell_id = cell_id
+        self._tri_id = type_id
         self._points = points
-        self._neighbours = np.array([])
+        self._neighbours_id = np.array([])
 
     def find_area(self, coords):
         self._area = A(coords)
@@ -30,38 +45,40 @@ class triangle_cell:
     def find_midpoint(self, coords):
         self._midpoint = midpoint(coords)
 
-    
-    def store_neighbours(self, triangels):
+    def store_neighbours(self, cells):
         my_points = set(self._points)
-        for tri in triangels:
-            matches = my_points & set(tri._points)
+        neighbours_id = []
+        for cell in cells:
+            matches = my_points & set(cell._points)
 
             if len(matches) == 2:
-                self._neighbours = np.append(self._neighbours, tri._cell_id)
+                neighbours_id.append(cell._cell_id)
+        
+        self._neighbours_id = np.array(neighbours_id)
 
 
 
 
-class cell_factory:
+class Cell_factory:
     def __init__(self) -> None:
         self._cell_types = {}
     
     def register(self, key, name):
         self._cell_types[key] = name
 
-    def __call__(self, cell, cell_id, celltype):
-        denne_cellen = self._cell_types[celltype](cell_id, cell)
+    def __call__(self, cell, cell_id, type_id, celltype):
+        denne_cellen = self._cell_types[celltype](cell_id, type_id, cell)
         return denne_cellen
 
 
-class mesh():
+class Mesh():
     def __init__(self, mesh_file):
         # Register the different types of cell (line and triangle)
-        factory = cell_factory()
+        factory = Cell_factory()
 
         important_cells = ['line', 'triangle']
         for imp_cell in important_cells:
-            factory.register(imp_cell, eval(imp_cell+'_cell'))
+            factory.register(imp_cell, eval(imp_cell.capitalize()+'_cell'))
         
 
         msh = meshio.read(mesh_file)
@@ -69,8 +86,9 @@ class mesh():
         self._cells = []
 
 
-        self._points = np.array([np.array(point[0:2]) for point in msh.points])
+        self._coords = np.array([np.array(point[0:2]) for point in msh.points])
 
+        cell_id = 0
         line_id = 0
         tri_id = 0
 
@@ -92,26 +110,27 @@ class mesh():
                     
                     # Here commes some code that is just for simplicity
                     if cft.type == 'line':
-                        cell_obj = factory(cell, line_id, cft.type)
+                        cell_obj = factory(cell, cell_id, line_id, cft.type)
                         self._lines.append(cell_obj)
                         line_id += 1
                     
                     elif cft.type == 'triangle':
-                        cell_obj = factory(cell, tri_id, cft.type)
+                        cell_obj = factory(cell, cell_id, tri_id, cft.type)
                         self._triangles.append(cell_obj)
                         tri_id += 1
                     
                     self._cells.append(cell_obj)
+                    cell_id += 1
 
     
     def cell_area(self):
         for tri in self._triangles:
-            tri.find_area(self._points[tri._points])
+            tri.find_area(self._coords[tri._points])
     
     def cell_midpoint(self):
-        for tri in self._triangles:
-            tri.find_midpoint(self._points[tri._points])
+        for cell in self._cells:
+            cell.find_midpoint(self._coords[cell._points])
 
     def find_neighbours(self):
-        for tri in self._triangles:
-            tri.store_neighbours(self._triangles)
+        for cell in self._cells:
+            cell.store_neighbours(self._cells)
