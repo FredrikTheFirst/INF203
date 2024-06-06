@@ -54,8 +54,7 @@ def ufunc(u):
                 print("dOil is more than one:")
                 print(F)
                 break
-            else:
-                Flist.append(F)
+            Flist.append(F)
         Fsumlist.append(u_old + sum(Flist))
         utot.append(u_old + sum(Flist))
     return np.array(Fsumlist)
