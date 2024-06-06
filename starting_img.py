@@ -13,12 +13,14 @@ msh.find_neighbours()
 
 x_mid = np.array([0.5, 0.5])
 vfelt = np.array([fc.v(tri._midpoint) for tri in msh._triangles])
-Afelt = np.array([tri._area for tri in msh._triangles])
+#Afelt = np.array([tri._area for tri in msh._triangles])
 
 dt = 0.05
 
 u = np.array([fc.starting_amount(x_mid, tri._midpoint) for tri in msh._triangles])
 
+Ftot = []
+utot = []
 def ufunc(u):
     Fsumlist = []
     for tri in msh._triangles:
@@ -26,17 +28,36 @@ def ufunc(u):
         tri_v = vfelt[tri._cell_id]
         Flist = []
         for neigh in tri._neighbours:
+            print("First neigh:")
+            print(neigh)
             neigh = msh._triangles[int(neigh)]
-            #print(tri._points)
-            #print(neigh._points)
-            matching_points = set(tri._points) & set(neigh._points)
-            #print(matching_points)
-            matching_coords = np.array([msh._points[point] for point in matching_points])
-            nu = fc.nuvector(matching_coords[0], matching_coords[1], tri._midpoint)
+            print("Second neigh:")
+            print(neigh)
             u_old_neigh = u[neigh._cell_id]
+            print("Old oil of neighbour")
+            print(u_old_neigh)
+            matching_points = set(tri._points) & set(neigh._points)
+            print("Matching points (indices):")
+            print(matching_points)
+            matching_coords = np.array([msh._points[point] for point in matching_points])
+            print("Matching coordinates:")
+            print(matching_coords)
+            nu = fc.nuvector(matching_coords[0], matching_coords[1], tri._midpoint)
+            print("nu-vector (element of R2):")
+            print(nu)
             F = fc.dOil(dt, tri._area, fc.g(u_old, u_old_neigh, 0.5*(tri_v+fc.v(neigh._midpoint)), nu))
-            Flist.append(F)
+            Ftot.append(F)
+            print("Change in oil, F-value, less than 1:")
+            print(F)
+            print()
+            if F > 1:
+                print("dOil is more than one:")
+                print(F)
+                break
+            else:
+                Flist.append(F)
         Fsumlist.append(u_old + sum(Flist))
+        utot.append(u_old + sum(Flist))
     return np.array(Fsumlist)
 
 def ulist(n):

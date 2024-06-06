@@ -54,18 +54,8 @@ def nuvector(v1, v2, mid):
 
 #tar koordinater til hjørnene på en trekant og gir tilbake en liste med normalvektorer på hver av kantene (ubrukelig?)
 def morevectors(coords, func):
-    coordlist = coords.tolist()
-    vectorset = []
-    for i, item in enumerate(coordlist):
-        pair = [item]
-        coordlist.pop(i)
-        for vector in coordlist:
-            pair.append(vector)
-            vectorset.append(pair)
-            pair = [item]
-    nlist = []
-    for item in vectorset:
-        nlist.append(func(np.array(item[0]), np.array(item[1]), midpoint(coords)))
+    c = np.array([e - coords[i-1] for i, e in enumerate(coords)])
+    nlist = [func(np.array([0, 0]), c[i], midpoint(c)) for i in range(len(coords))]
     return np.array(nlist)
 
 #danner startolja til hver celle
