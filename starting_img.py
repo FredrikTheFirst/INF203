@@ -4,7 +4,7 @@ import functions as fc
 from mesh_object import *
 
 mesh_file = 'bay.msh'
-msh = mesh(mesh_file)
+msh = Mesh(mesh_file)
 msh.cell_midpoint()
 msh.cell_area()
 msh.find_neighbours()
@@ -17,29 +17,31 @@ vfelt = np.array([fc.v(tri._midpoint) for tri in msh._triangles])
 
 dt = 0.05
 
-u = np.array([fc.starting_amount(x_mid, tri._midpoint) for tri in msh._triangles])
+u = np.array([fc.starting_amount(x_mid, cell._midpoint) for cell in msh._cells])
 
 Ftot = []
 utot = []
 def ufunc(u):
-    Fsumlist = []
+    Fsumlist = u.copy()
     for tri in msh._triangles:
         u_old = u[tri._cell_id]
-        tri_v = vfelt[tri._cell_id]
+        tri_v = vfelt[tri._tri_id]
         Flist = []
-        for neigh in tri._neighbours:
-            print("First neigh:")
-            print(neigh)
-            neigh = msh._triangles[int(neigh)]
+        for neigh_id in tri._neighbours_id:
+            print("First neigh_id:")
+            print(neigh_id)
+            neigh = msh._cells[int(neigh_id)]
             print("Second neigh:")
             print(neigh)
             u_old_neigh = u[neigh._cell_id]
             print("Old oil of neighbour")
             print(u_old_neigh)
+            print('Coords set')
+            print(set(tri._points), set(neigh._points))
             matching_points = set(tri._points) & set(neigh._points)
             print("Matching points (indices):")
             print(matching_points)
-            matching_coords = np.array([msh._points[point] for point in matching_points])
+            matching_coords = np.array([msh._coords[point] for point in matching_points])
             print("Matching coordinates:")
             print(matching_coords)
             nu = fc.nuvector(matching_coords[0], matching_coords[1], tri._midpoint)
@@ -53,9 +55,8 @@ def ufunc(u):
             if F > 1:
                 print("dOil is more than one:")
                 print(F)
-                break
             Flist.append(F)
-        Fsumlist.append(u_old + sum(Flist))
+        Fsumlist[tri._cell_id] += sum(Flist)
         utot.append(u_old + sum(Flist))
     return np.array(Fsumlist)
 
@@ -87,8 +88,8 @@ for i, el in enumerate(ulist(8)):
     plt.colorbar(sm, cax=cbar_ax, label='label3')
 
     # Need for-loop
-    for tri, amount in zip(msh._triangles, el):
-        coords = msh._points[tri._points]
+    for cell, amount in zip(msh._cells, el):
+        coords = msh._coords[cell._points]
         plt.gca().add_patch(plt.Polygon(coords, color=plt.cm.viridis((amount - umin)/(umax - umin)), alpha=0.9))
 
 
