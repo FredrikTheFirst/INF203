@@ -1,5 +1,5 @@
 import numpy as np
-from src.cellParant import *
+from src.package.cellParant import *
 
 
 class Line_cell(Cell):
