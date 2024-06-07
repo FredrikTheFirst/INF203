@@ -1,15 +1,17 @@
 
-from mesh_object import mesh
-import functions as fc
-import numpy as np
+class Simulation():
+    def __init__(self, filename):
+        self._filename = filename
 
-file_name = 'bay.msh'
-msh = mesh(file_name)
-msh.cell_midpoint()
+    def runsim(self):
+        pass
 
-vfelt = np.array([fc.v(tri._midpoint) for tri in msh._triangles])
+    def fetch_neighbours(self):
+        pass
 
+    def photo(self):
+        pass
 
-
-#%% Making strating conditions
+    def makevideo(self):
+        pass
 
