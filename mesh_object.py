@@ -17,10 +17,26 @@ class Cell(ABC):
     def store_neighbours(self, cells):
         my_points = set(self._points)
         for cell in cells:
-            matches = my_points & set(cell._points)
+            matches = my_points & set(cell.points)
 
             if len(matches) == 2:
-                self._neighbours_id = np.append(self._neighbours_id, cell._cell_id)
+                self._neighbours_id = np.append(self._neighbours_id, cell.id)
+    
+    @property
+    def id(self):
+        return self._id
+    
+    @property
+    def points(self):
+        return self._points
+    
+    @property
+    def neighbours_id(self):
+        return self._neighbours_id
+    
+    @property
+    def midpoint(self):
+        return self._midpoint
 
 
 class Line_cell(Cell):
@@ -32,6 +48,7 @@ class Line_cell(Cell):
     
     def store_neighbours(self, cells):
         super().store_neighbours(cells)
+
 
 class Triangle_cell(Cell):
     def __init__(self, cell_id, points):
@@ -45,6 +62,10 @@ class Triangle_cell(Cell):
 
     def find_area(self, coords):
         self._area = A(coords)
+    
+    @property
+    def area(self):
+        return self._area
 
 
 class Cell_factory:
@@ -96,15 +117,23 @@ class Mesh():
 
     def triangel_area(self):
         for cell in self.get_triangles():
-            cell.find_area(self._coords[cell._points])
+            cell.find_area(self._coords[cell.points])
     
     def cell_midpoint(self):
         for cell in self._cells:
-            cell.find_midpoint(self._coords[cell._points])
+            cell.find_midpoint(self._coords[cell.points])
 
     def find_neighbours(self):
         for cell in self._cells:
             cell.store_neighbours(self._cells)
+    
+    @property
+    def cells(self):
+        return self._cells
+    
+    @property
+    def coords(self):
+        return self._coords
 
 if __name__ == '__main__':
     msh = Mesh('simple_mesh.msh')
@@ -113,19 +142,18 @@ if __name__ == '__main__':
     msh.cell_midpoint()
 
     
-    for cell in msh._cells:
+    for cell in msh.cells:
         print('')
-        print('>', cell._cell_id)
-        print(cell._midpoint)
-        print(cell._neighbours_id)
+        print('>', cell.id)
+        print(cell.midpoint)
+        print(cell.neighbours_id)
         print(type(cell).__name__)
     
     
     print('Kun trekanter')
-    for cell in msh._cells:
-        if type(cell).__name__ == 'Triangle_cell':
-            print('>', cell._cell_id)
-            print(cell._area)
+    for cell in msh.get_triangles():
+            print('>', cell.id)
+            print(cell.area)
         
     a = msh.get_triangles()
     print(a)
