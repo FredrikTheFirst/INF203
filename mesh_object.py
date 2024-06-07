@@ -6,22 +6,18 @@ from functions import midpoint, A
 
 
 class Cell(ABC):
-    def __init__(self, cell_id, points) -> None:
+    def __init__(self, cell_id, points):
+        # Storing a bunch of values
         self._id = cell_id
         self._points = points
-        self._neighbours_id = np.array([], dtype='int32')
+        self._midpoint = None
     
+    # Compute the midpoint of the cell
     def find_midpoint(self, coords):
         self._midpoint = midpoint(coords)
     
-    def store_neighbours(self, cells):
-        my_points = set(self._points)
-        for cell in cells:
-            matches = my_points & set(cell.points)
-
-            if len(matches) == 2:
-                self._neighbours_id = np.append(self._neighbours_id, cell.id)
-    
+    # @property makes it such that you can acses the attributes but
+    # not change them 
     @property
     def id(self):
         return self._id
@@ -40,36 +36,49 @@ class Cell(ABC):
 
 
 class Line_cell(Cell):
+    # The super() makes it so that this class inherites the method
+    # from the parent class
     def __init__(self, cell_id, points):
         super().__init__(cell_id, points)
     
     def find_midpoint(self, coords):
         super().find_midpoint(coords)
-    
-    def store_neighbours(self, cells):
-        super().store_neighbours(cells)
 
 
 class Triangle_cell(Cell):
+    # The super() makes it so that this class inherites the method
+    # from the parent class
     def __init__(self, cell_id, points):
         super().__init__(cell_id, points)
+        self._area = None
+        # The id's get stored as int
+        self._neighbours_id = np.array([], dtype='int32')
     
     def find_midpoint(self, coords):
         super().find_midpoint(coords)
     
+    # Find and store the neighbours of each triangel
     def store_neighbours(self, cells):
-        super().store_neighbours(cells)
+        my_points = set(self._points)
+        for cell in cells:
+            matches = my_points & set(cell.points)
 
+            if len(matches) == 2:
+                self._neighbours_id = np.append(self._neighbours_id, cell.id)
+
+    # Computing the area of each triangel
     def find_area(self, coords):
         self._area = A(coords)
-    
+
+    # @property makes it such that you can acses the attributes but
+    # not change them 
     @property
     def area(self):
         return self._area
 
 
 class Cell_factory:
-    def __init__(self) -> None:
+    def __init__(self):
         self._cell_types = {}
     
     def register(self, key, name):
@@ -85,46 +94,53 @@ class Mesh():
         # Register the different types of cell (line and triangle)
         factory = Cell_factory()
 
+        # We only care about line- and triangle cells
         important_cells = ['line', 'triangle']
+        # Register only the types of cell in "important_cells"
         for imp_cell in important_cells:
             factory.register(imp_cell, eval(imp_cell.capitalize()+'_cell'))
         
-
+        # Reading the mesh_file
         msh = meshio.read(mesh_file)
 
         self._cells = []
-        cell_id = 0
 
+        # Gets rid of the always zero z-coordinate while reading
+        # the coordinates for each point
         self._coords = np.array([np.array(point[0:2]) for point in msh.points])
 
+        cell_id = 0
+        # Go throug the cells from the given mesh_file
         for cft in msh.cells:
-            # Checking if the cell type is a line or triangle
+            # Checking if the cell type is one of the types in important_cells
             is_important = False
-            for imp_cell in important_cells:
-                if cft.type == imp_cell:
-                    is_important = True
+            if cft.type in important_cells:
+                is_important = True
             
             # Making the cell objects
             if is_important:
                 for cell in cft.data:
-
                     cell_obj = factory(cell, cell_id, cft.type)
                     self._cells.append(cell_obj)
                     cell_id += 1
 
+    # A method to get a list of only the triangel cells
     def get_triangles(self):
         return [cell for cell in self._cells if type(cell).__name__ == 'Triangle_cell']
-
+    
+    # Computing the area of each triangel cell
     def triangel_area(self):
         for cell in self.get_triangles():
             cell.find_area(self._coords[cell.points])
     
+    # Computing the midpoint of all cells
     def cell_midpoint(self):
         for cell in self._cells:
             cell.find_midpoint(self._coords[cell.points])
 
+    # Register the neighbours of all cells
     def find_neighbours(self):
-        for cell in self._cells:
+        for cell in self.get_triangles():
             cell.store_neighbours(self._cells)
     
     @property
@@ -135,10 +151,13 @@ class Mesh():
     def coords(self):
         return self._coords
 
+
+
 if __name__ == '__main__':
+    
     msh = Mesh('simple_mesh.msh')
     msh.find_neighbours()
-    msh.triangel_area()
+    # msh.triangel_area()
     msh.cell_midpoint()
 
     
@@ -146,15 +165,16 @@ if __name__ == '__main__':
         print('')
         print('>', cell.id)
         print(cell.midpoint)
-        print(cell.neighbours_id)
         print(type(cell).__name__)
     
-    
+    print('')
     print('Kun trekanter')
     for cell in msh.get_triangles():
-            print('>', cell.id)
-            print(cell.area)
+        print('')
+        print('>', cell.id)
+        print(cell.area)
         
     a = msh.get_triangles()
     print(a)
+    
 

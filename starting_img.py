@@ -6,24 +6,24 @@ from mesh_object import *
 mesh_file = 'bay.msh'
 msh = Mesh(mesh_file)
 msh.cell_midpoint()
-msh.cell_area()
+msh.triangel_area()
 msh.find_neighbours()
 
 
 
 x_mid = np.array([0.35, 0.45])
-vfelt = np.array([v(cell._midpoint) for cell in msh._cells])
-#Afelt = np.array([tri._area for tri in msh._triangles])
+vfelt = np.array([v(cell.midpoint) for cell in msh.cells])
+#Afelt = np.array([tri.area for tri in msh.triangles])
 
 dt = 0.001
 
-u = np.array([starting_amount(x_mid, cell._midpoint) for cell in msh._cells])
+u = np.array([starting_amount(x_mid, cell.midpoint) for cell in msh.cells])
 
 def ufunc(u):
     Oillist = u.copy()
-    for tri in msh._triangles:
-        u_old = u[tri._cell_id]
-        tri_v = vfelt[tri._cell_id]
+    for tri in msh.get_triangles():
+        u_old = u[tri.id]
+        tri_v = vfelt[tri.id]
         Flist = []
         for neigh_id in tri._neighbours_id:
             neigh = msh._cells[int(neigh_id)]
@@ -35,10 +35,10 @@ def ufunc(u):
 
             nu = nuvector(matching_coords, tri._midpoint)
             v = 0.5*(tri_v + neigh_v)
-            G = g(u_old, u_old_neigh, v)
-            F = dOil(dt, tri._area, G, nu)
+            G = g(u_old, u_old_neigh, v, nu)
+            F = dOil(dt, tri.area, G)
             Flist.append(F)
-        Oillist[tri._cell_id] += sum(Flist)
+        Oillist[tri.id] += sum(Flist)
     return np.array(Oillist)
 
 def ulist(n):
@@ -72,8 +72,8 @@ for i, el in enumerate([oillist[i] for i in range(0, 500, 20)]):
     plt.colorbar(sm, cax=cbar_ax, label='label3')
 
     # Need for-loop
-    for cell, amount in zip(msh._cells, el):
-        coords = msh._coords[cell._points]
+    for cell, amount in zip(msh.cells, el):
+        coords = msh.coords[cell.points]
         plt.gca().add_patch(plt.Polygon(coords, color=plt.cm.viridis((amount - umin)/(umax - umin)), alpha=0.9))
 
 
