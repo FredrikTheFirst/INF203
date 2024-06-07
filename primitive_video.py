@@ -2,7 +2,7 @@ import cv2 # requires opencv-python
 
 
 # Get the list of image files in the directory
-images = [f"tmp/img_{i}.png" for i in range(0,20)]
+images = [f"tmp/start_img_{i}.png" for i in range(0,25)]
 
 # determine dimension from first image
 frame = cv2.imread(images[0])

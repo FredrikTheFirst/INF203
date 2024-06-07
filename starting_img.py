@@ -26,30 +26,12 @@ def ufunc(u):
         tri_v = vfelt[tri._tri_id]
         Flist = []
         for neigh_id in tri._neighbours_id:
-            #print("First neigh_id:")
-            #print(neigh_id)
             neigh = msh._cells[int(neigh_id)]
-            #print("Second neigh:")
-            #print(neigh)
             u_old_neigh = u[neigh._cell_id]
-            #print("Old oil of neighbour")
-            #print(u_old_neigh)
-            #print('Coords set')
-            #print(set(tri._points), set(neigh._points))
             matching_points = set(tri._points) & set(neigh._points)
-            #print("Matching points (indices):")
-            #print(matching_points)
             matching_coords = np.array([msh._coords[point] for point in matching_points])
-            #print("Matching coordinates:")
-            #print(matching_coords)
             nu = fc.nuvector(matching_coords[0], matching_coords[1], tri._midpoint)
-            #print("nu-vector (element of R2):")
-            #print(nu)
-            #print(tri._area, " + ", u_old, " + ", u_old_neigh, " + ", tri_v, " + ", neigh._midpoint, " + ", fc.v(neigh._midpoint))
             F = fc.dOil(dt, tri._area, fc.g(u_old, u_old_neigh, 0.5*(tri_v+fc.v(neigh._midpoint)), nu))
-            #print("Change in oil, F-value, less than 1:")
-            #print(F)
-            #print()
             Flist.append(F)
         Fsumlist[tri._cell_id] += sum(Flist)
     return np.array(Fsumlist)
@@ -58,6 +40,7 @@ def ulist(n):
     ulist = [u]
     for i in range(n):
         ulist.append(ufunc(ulist[-1]))
+        print(f"Printed u number {i}.")
     return tuple(ulist)
 
 # u = np.array([0.0, 1.0])
@@ -67,7 +50,9 @@ def ulist(n):
 
 # Plot the mesh by adding all triangles with their value
 
-for i, el in enumerate(ulist(500)):
+oillist = ulist(500)
+
+for i, el in enumerate([oillist[i] for i in range(0, 500, 20)]):
     plt.figure()
 
 
