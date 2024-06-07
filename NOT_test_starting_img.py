@@ -1,3 +1,6 @@
+
+#VI SKAL IKKE BRUKE DETTE:D
+
 import matplotlib.pyplot as plt
 import numpy as np
 from functions import *
@@ -24,19 +27,14 @@ def ufunc(u):
     for tri in msh._triangles:
         u_old = u[tri._cell_id]
         tri_v = vfelt[tri._cell_id]
-        Flist = []
-        for neigh_id in tri._neighbours_id:
-            neigh = msh._cells[int(neigh_id)]
-            u_old_neigh = u[neigh._cell_id]
-            neigh_v = vfelt[neigh._cell_id]
-            matching_points = set(tri._points) & set(neigh._points)
-            matching_coords = np.array([msh._coords[point] for point in matching_points])
-            nu = nuvector(matching_coords, tri._midpoint)
-            v = 0.5*(tri_v + neigh_v)
-            G = g(u_old, u_old_neigh, v)
-            F = dOil(dt, tri._area, G, nu)
-            Flist.append(F)
-        Oillist[tri._cell_id] += sum(Flist)
+        neighvlist = np.array([vfelt[i] for i in tri._neighbours_id])
+        neighoil = np.array([Oillist[i] for i in tri._neighbours_id])
+        matching_coords_list = np.array([[msh._coords[point] for point in set(tri._points) & set(msh._cells[i]._points)] for i in tri._neighbours_id])
+        nu = np.array([nuvector(matching_coords, x_mid) for matching_coords in matching_coords_list])
+        v = 0.5*(tri_v + neighvlist)
+        G = np.array([g(u_old, neighoil, vi, nui) for vi, nui in zip(v, nu)])
+        F = dOil(dt, tri._area, G, nu)
+        Oillist[tri._cell_id] += F
     return np.array(Oillist)
 
 def ulist(n):
