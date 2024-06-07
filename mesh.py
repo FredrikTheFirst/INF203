@@ -1,81 +1,3 @@
-import meshio
-import numpy as np
-from abc import ABC, abstractmethod
-from functions import midpoint, A
-
-
-
-class Cell(ABC):
-    def __init__(self, cell_id, points):
-        # Storing a bunch of values
-        self._id = cell_id
-        self._points = points
-        self._midpoint = None
-    
-    # Compute the midpoint of the cell
-    def find_midpoint(self, coords):
-        self._midpoint = midpoint(coords)
-    
-    # @property makes it such that you can acses the attributes but
-    # not change them 
-    @property
-    def id(self):
-        return self._id
-    
-    @property
-    def points(self):
-        return self._points
-    
-    @property
-    def neighbours_id(self):
-        return self._neighbours_id
-    
-    @property
-    def midpoint(self):
-        return self._midpoint
-
-
-class Line_cell(Cell):
-    # The super() makes it so that this class inherites the method
-    # from the parent class
-    def __init__(self, cell_id, points):
-        super().__init__(cell_id, points)
-    
-    def find_midpoint(self, coords):
-        super().find_midpoint(coords)
-
-
-class Triangle_cell(Cell):
-    # The super() makes it so that this class inherites the method
-    # from the parent class
-    def __init__(self, cell_id, points):
-        super().__init__(cell_id, points)
-        self._area = None
-        # The id's get stored as int
-        self._neighbours_id = np.array([], dtype='int32')
-    
-    def find_midpoint(self, coords):
-        super().find_midpoint(coords)
-    
-    # Find and store the neighbours of each triangel
-    def store_neighbours(self, cells):
-        my_points = set(self._points)
-        for cell in cells:
-            matches = my_points & set(cell.points)
-
-            if len(matches) == 2:
-                self._neighbours_id = np.append(self._neighbours_id, cell.id)
-
-    # Computing the area of each triangel
-    def find_area(self, coords):
-        self._area = A(coords)
-
-    # @property makes it such that you can acses the attributes but
-    # not change them 
-    @property
-    def area(self):
-        return self._area
-
 
 class Cell_factory:
     def __init__(self):
@@ -87,7 +9,6 @@ class Cell_factory:
     def __call__(self, cell, cell_id, celltype):
         denne_cellen = self._cell_types[celltype](cell_id, cell)
         return denne_cellen
-
 
 class Mesh():
     def __init__(self, mesh_file):
