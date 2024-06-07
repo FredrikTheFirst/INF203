@@ -7,7 +7,7 @@ from functions import midpoint, A
 
 class Cell(ABC):
     def __init__(self, cell_id, points) -> None:
-        self._cell_id = cell_id
+        self._id = cell_id
         self._points = points
         self._neighbours_id = np.array([], dtype='int32')
     
