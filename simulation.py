@@ -21,7 +21,7 @@ class Simulation():
             Flist = []
             for neigh_id in tri._neighbours_id:
                 neigh = msh._cells[int(neigh_id)]
-                u_old_neigh = u[neigh._cell_id]
+                u_old_neigh = self.u[neigh._cell_id]
                 neigh_v = self.vfelt[neigh._cell_id]
                 
                 matching_points = set(tri._points) & set(neigh._points)
@@ -30,7 +30,7 @@ class Simulation():
                 nu = nuvector(matching_coords, tri._midpoint)
                 v = 0.5*(tri_v + neigh_v)
                 G = g(u_old, u_old_neigh, v, nu)
-                F = dOil(dt, tri.area, G)
+                F = dOil(self.dt, tri.area, G)
                 Flist.append(F)
             Oillist[tri.id] += sum(Flist)
         #return np.array(Oillist)
@@ -72,11 +72,12 @@ class Simulation():
         plt.close()
 
     def photos(self, intv):
-        for i in range(0, self.frames, intv)
+        for i in range(0, self.frames, intv):
             self.photo(i)
 
-    def makevideo(self):
-
+    def makevideo(self, framerate = 5):
+        
+        self.fr = framerate
         # Get the list of image files in the directory
         images = [f"tmp/start_img_{i}.png" for i in range(0,25)]
 
@@ -86,7 +87,7 @@ class Simulation():
 
         ## Define the codec and create a VideoWriter object
         fourcc = cv2.VideoWriter_fourcc(*'mp4v') # or 'XVID', 'DIVX', 'mp4v' etc.
-        video = cv2.VideoWriter("video.AVI", fourcc, 5, (width, height)) # 5 frames per second
+        video = cv2.VideoWriter("video.AVI", fourcc, self.fr, (width, height)) # 5 frames per second
 
         for image in images:
             video.write(cv2.imread(image))
