@@ -1,4 +1,4 @@
-class Cell(ABC):
+class Cell:
     def __init__(self, cell_id, points):
         # Storing a bunch of values
         self._id = cell_id

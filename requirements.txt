@@ -3,3 +3,4 @@ numpy
 matplotlib
 opencv-python
 abc
+pytest

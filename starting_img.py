@@ -27,8 +27,8 @@ def ufunc(u):
         Flist = []
         for neigh_id in tri._neighbours_id:
             neigh = msh._cells[int(neigh_id)]
-            u_old_neigh = u[neigh._cell_id]
-            neigh_v = vfelt[neigh._cell_id]
+            u_old_neigh = u[neigh.id]
+            neigh_v = vfelt[neigh.id]
             
             matching_points = set(tri._points) & set(neigh._points)
             matching_coords = np.array([msh._coords[point] for point in matching_points])

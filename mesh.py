@@ -1,3 +1,6 @@
+import numpy as np
+from src.cellChild import *
+
 
 class Cell_factory:
     def __init__(self):
@@ -9,6 +12,7 @@ class Cell_factory:
     def __call__(self, cell, cell_id, celltype):
         denne_cellen = self._cell_types[celltype](cell_id, cell)
         return denne_cellen
+
 
 class Mesh():
     def __init__(self, mesh_file):
