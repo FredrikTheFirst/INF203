@@ -25,15 +25,15 @@ def ufunc(u):
         u_old = u[tri.id]
         tri_v = vfelt[tri.id]
         Flist = []
-        for neigh_id in tri._neighbours_id:
-            neigh = msh._cells[int(neigh_id)]
-            u_old_neigh = u[neigh._cell_id]
-            neigh_v = vfelt[neigh._cell_id]
+        for neigh_id in tri.neighbours_id:
+            neigh = msh.cells[int(neigh_id)]
+            u_old_neigh = u[neigh.id]
+            neigh_v = vfelt[neigh.id]
             
-            matching_points = set(tri._points) & set(neigh._points)
-            matching_coords = np.array([msh._coords[point] for point in matching_points])
+            matching_points = set(tri.points) & set(neigh.points)
+            matching_coords = np.array([msh.coords[point] for point in matching_points])
 
-            nu = nuvector(matching_coords, tri._midpoint)
+            nu = nuvector(matching_coords, tri.midpoint)
             v = 0.5*(tri_v + neigh_v)
             G = g(u_old, u_old_neigh, v, nu)
             F = dOil(dt, tri.area, G)

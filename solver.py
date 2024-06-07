@@ -6,7 +6,7 @@ import cv2
 
 class Simulation():
     def __init__(self, filename, midpoint = np.array([0.35, 0.45])):
-        self._filename = filename
+        self.filename = filename
         self.x_mid = midpoint
         self.msh = Mesh(filename)
         self.vfelt = np.array([v(cell.midpoint) for cell in self.msh.cells])
@@ -20,15 +20,15 @@ class Simulation():
             u_old = self.u[tri.id]
             tri_v = self.vfelt[tri.id]
             Flist = []
-            for neigh_id in tri._neighbours_id:
-                neigh = self.msh._cells[int(neigh_id)]
-                u_old_neigh = self.u[neigh._cell_id]
-                neigh_v = self.vfelt[neigh._cell_id]
+            for neigh_id in tri.neighbours_id:
+                neigh = self.msh.cells[int(neigh_id)]
+                u_old_neigh = self.u[neigh.id]
+                neigh_v = self.vfelt[neigh.id]
                 
-                matching_points = set(tri._points) & set(neigh._points)
-                matching_coords = np.array([self.msh._coords[point] for point in matching_points])
+                matching_points = set(tri.points) & set(neigh.points)
+                matching_coords = np.array([self.msh.coords[point] for point in matching_points])
 
-                nu = nuvector(matching_coords, tri._midpoint)
+                nu = nuvector(matching_coords, tri.midpoint)
                 v = 0.5*(tri_v + neigh_v)
                 G = g(u_old, u_old_neigh, v, nu)
                 F = dOil(self.dt, tri.area, G)
