@@ -31,19 +31,10 @@ def midpoint(coords):
 #90 graders rotasjonsmatrise
 M = np.array([[0, -1], [1, 0]])
 
-#n-vector funksjon, tar to koordinater og et triangelmidtpunkt, lager en ortonormal vektor på linja
-def nvector(v1, v2, mid):
-    e = v2 - v1
-    nn = M @ e / np.linalg.norm(e)
-    pl = v2 - mid + v1 - mid
-    if nn @ pl > 0:
-        return nn
-    else:
-        return -nn
-
 
 #n-vector funksjon, tar to koordinater og et triangelmidtpunkt, lager en ortogonal vektor på linja med samme lengde som linja
-def nuvector(v1, v2, mid):
+def nuvector(v, mid):
+    v1, v2 = v[0], v[1]
     e = v2 - v1
     nn = M @ e
     pl = v1 - mid + v2 - mid
@@ -53,9 +44,9 @@ def nuvector(v1, v2, mid):
         return -nn
 
 #tar koordinater til hjørnene på en trekant og gir tilbake en liste med normalvektorer på hver av kantene (ubrukelig?)
-def morevectors(coords, func):
-    c = np.array([e - coords[i-1] for i, e in enumerate(coords)])
-    nlist = [func(np.array([0, 0]), c[i], midpoint(c)) for i in range(len(coords))]
+def morevectors(triangle_coords, func):
+    c = np.array([e - triangle_coords[i-1] for i, e in enumerate(triangle_coords)])
+    nlist = [func(np.array([np.array([0, 0]), c[i]]), midpoint(c)) for i in range(len(coords))]
     return np.array(nlist)
 
 #danner startolja til hver celle
