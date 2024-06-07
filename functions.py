@@ -25,7 +25,7 @@ def A(coords):
 
 #finner midtpunkt
 def midpoint(coords):
-    return 1 / len(coords) * sum(coords)
+    return sum(coords) / len(coords)
 
 
 #90 graders rotasjonsmatrise
