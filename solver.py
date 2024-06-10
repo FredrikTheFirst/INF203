@@ -9,6 +9,11 @@ class Simulation():
         self.filename = filename
         self.x_mid = midpoint
         self.msh = Mesh(filename)
+
+        self.msh.cell_midpoint()
+        self.msh.triangel_area()
+        self.msh.find_neighbours()
+
         self.vfelt = np.array([v(cell.midpoint) for cell in self.msh.cells])
         self.u = np.array([starting_amount(self.x_mid, cell.midpoint) for cell in self.msh.cells])
 
