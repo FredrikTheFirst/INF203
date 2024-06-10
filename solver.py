@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from functions import *
-from mesh_object import *
+from src.package.mesh import *
 import cv2
 
 class Simulation():
