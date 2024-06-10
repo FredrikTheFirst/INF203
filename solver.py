@@ -47,7 +47,7 @@ class Simulation():
                 F = dOil(self.dt, tri.area, G)
                 Flist.append(F)
             ucopy[tri.id] += sum(Flist)
-        return ucopy
+        return np.array(ucopy)
 
     def photo(self, i):
         el = self.Oillist[i]
