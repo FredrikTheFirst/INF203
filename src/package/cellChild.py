@@ -33,6 +33,10 @@ class Triangle_cell(Cell):
             if len(matches) == 2:
                 self._neighbours_id = np.append(self._neighbours_id, cell.id)
 
+                # If the neigbours is a triangel we store the cell`s id in the neigbhours list 
+                if type(cell).__name__ == 'Triangle_cell':
+                    cell.neighbours_id = np.append(cell.neighbous_id, self.id)
+
     # Computing the area of each triangel
     def find_area(self, coords):
         self._area = A(coords)
@@ -42,3 +46,12 @@ class Triangle_cell(Cell):
     @property
     def area(self):
         return self._area
+    
+    @property
+    def neighbours_id(self):
+        return self._neighbours_id
+
+    @neighbours_id.setter
+    def neighbours_id(self, id):
+        if isinstance(id, bool):
+            return self._neighbours_id

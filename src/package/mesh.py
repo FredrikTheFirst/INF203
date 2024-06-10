@@ -1,5 +1,6 @@
+import meshio
 import numpy as np
-from src.cellChild import *
+from src.package.cellChild import *
 
 
 class Cell_factory:
@@ -65,8 +66,10 @@ class Mesh():
 
     # Register the neighbours of all cells
     def find_neighbours(self):
+        cells = self._cells
         for cell in self.get_triangles():
-            cell.store_neighbours(self._cells)
+            cell.store_neighbours(cells)
+            del cells[cell.id]
     
     @property
     def cells(self):
