@@ -19,8 +19,16 @@ class Simulation():
 
     def runsim(self, frames = 500, time = 0.5):
         self.frames = frames
-        self.dt = time/frames
-        Oillist = self.u.copy()
+        self.time = time
+        self.dt = self.time/self.frames
+        ulist = [self.u]
+        for i in range(self.frames):
+            ulist.append(self.genoil(ulist[-1]))
+            print(f"Printed u number {i}.")
+        self.Oillist = tuple(ulist)
+
+    def genoil(self, u):
+        ucopy = u.copy()
         for tri in self.msh.get_triangles():
             u_old = self.u[tri.id]
             tri_v = self.vfelt[tri.id]
@@ -38,9 +46,8 @@ class Simulation():
                 G = g(u_old, u_old_neigh, v, nu)
                 F = dOil(self.dt, tri.area, G)
                 Flist.append(F)
-            Oillist[tri.id] += sum(Flist)
-        #return np.array(Oillist)
-        self.Oillist = Oillist
+            ucopy[tri.id] += sum(Flist)
+        return ucopy
 
     def photo(self, i):
         el = self.Oillist[i]
