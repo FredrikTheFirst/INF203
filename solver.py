@@ -30,12 +30,12 @@ class Simulation():
     def genoil(self, u):
         ucopy = u.copy()
         for tri in self.msh.get_triangles():
-            u_old = self.u[tri.id]
+            u_old = u[tri.id]
             tri_v = self.vfelt[tri.id]
             Flist = []
             for neigh_id in tri.neighbours_id:
                 neigh = self.msh.cells[int(neigh_id)]
-                u_old_neigh = self.u[neigh.id]
+                u_old_neigh = u[neigh.id]
                 neigh_v = self.vfelt[neigh.id]
                 
                 matching_points = set(tri.points) & set(neigh.points)
