@@ -1,7 +1,7 @@
 import meshio
 import numpy as np
 from abc import ABC, abstractmethod
-from functions import midpoint, A
+from src.package.functions import midpoint, A, nuvector
 
 
 
@@ -57,7 +57,7 @@ class Triangle_cell(Cell):
     def find_midpoint(self, coords):
         super().find_midpoint(coords)
     
-    # Find and store the neighbours of each triangel
+    # Find and store the neighbours of each triangle
     def store_neighbours(self, cells):
         my_points = set(self._points)
         for cell in cells:
@@ -66,11 +66,14 @@ class Triangle_cell(Cell):
             if len(matches) == 2:
                 self._neighbours_id = np.append(self._neighbours_id, cell.id)
 
-    # Computing the area of each triangel
+    def find_nuvecs(self, cells):
+        self.nuvectors = np.array([nuvector(cells._points[id], self._midpoint) for id in self._neighbours_id])
+
+    # Computing the area of each triangle
     def find_area(self, coords):
         self._area = A(coords)
 
-    # @property makes it such that you can acses the attributes but
+    # @property makes it so that you can access the attributes but
     # not change them 
     @property
     def area(self):
@@ -142,6 +145,10 @@ class Mesh():
     def find_neighbours(self):
         for cell in self.get_triangles():
             cell.store_neighbours(self._cells)
+    
+    def find_nuvectors(self):
+        for cell in self.get_triangles():
+            cell.find_nuvecs(self._cells)
     
     @property
     def cells(self):
