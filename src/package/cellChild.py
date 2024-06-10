@@ -33,6 +33,10 @@ class Triangle_cell(Cell):
             if len(matches) == 2:
                 self._neighbours_id = np.append(self._neighbours_id, cell.id)
 
+                # If the neigbours is a triangel we store the cell`s id in the neigbhours list 
+                if type(cell).__name__ == 'Triangle_cell':
+                    cell._neighbours_id = np.append(cell.neighbous_id, self.id)
+
     # Computing the area of each triangel
     def find_area(self, coords):
         self._area = A(coords)
