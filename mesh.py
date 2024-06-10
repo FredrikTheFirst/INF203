@@ -1,5 +1,5 @@
 import numpy as np
-from src.cellChild import *
+from src.package.cellChild import *
 
 
 class Cell_factory:
