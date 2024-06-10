@@ -67,9 +67,8 @@ class Mesh():
     # Register the neighbours of all cells
     def find_neighbours(self):
         cells = self._cells
-        for cell in self.get_triangles():
-            cell.store_neighbours(cells)
-            del cells[cell.id]
+        for id, cell in enumerate(self.get_triangles()):
+            cell.store_neighbours(cells[id:])
     
     @property
     def cells(self):
