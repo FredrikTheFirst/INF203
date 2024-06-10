@@ -20,9 +20,5 @@ class Cell:
         return self._points
     
     @property
-    def neighbours_id(self):
-        return self._neighbours_id
-    
-    @property
     def midpoint(self):
         return self._midpoint

@@ -47,6 +47,10 @@ class Triangle_cell(Cell):
     def area(self):
         return self._area
     
+    @property
+    def neighbours_id(self):
+        return self._neighbours_id
+
     @neighbours_id.setter
     def neighbours_id(self, id):
         if isinstance(id, bool):
