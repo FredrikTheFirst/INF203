@@ -1,3 +1,5 @@
+from src.package.functions import *
+
 class Cell:
     def __init__(self, cell_id, points):
         # Storing a bunch of values

@@ -1,7 +1,7 @@
 import numpy as np
 from src.package.cellParant import *
 
-
+# Just a comment
 class Line_cell(Cell):
     # The super() makes it so that this class inherites the method
     # from the parent class
@@ -24,18 +24,35 @@ class Triangle_cell(Cell):
     def find_midpoint(self, coords):
         super().find_midpoint(coords)
     
+    @property
+    def neighbours_id(self):
+        return self._neighbours_id
+    """
+    @neighbours_id.setter
+    def neighbours_id(self, id):
+        if isinstance(id, int):
+            return self._neighbours_id
+    """
+    
     # Find and store the neighbours of each triangel
     def store_neighbours(self, cells):
         my_points = set(self._points)
-        for cell in cells:
-            matches = my_points & set(cell.points)
 
-            if len(matches) == 2:
-                self._neighbours_id = np.append(self._neighbours_id, cell.id)
+        # If a triangel already has 3 neigbhours we dont look for others
+        if len(self._neighbours_id) != 3:
+            for cell in cells:
+                matches = my_points & set(cell.points)
 
-                # If the neigbours is a triangel we store the cell`s id in the neigbhours list 
-                if type(cell).__name__ == 'Triangle_cell':
-                    cell.neighbours_id = np.append(cell.neighbous_id, self.id)
+                if len(matches) == 2:
+                    self._neighbours_id = np.append(self._neighbours_id, cell.id)
+                    
+                    # If the neigbours is a triangel we store the cell`s id in the neigbhours list 
+                    if type(cell).__name__ == 'Triangle_cell':
+                        cell._neighbours_id = np.append(cell._neighbours_id, self._id)
+                        
+                    # If a triangel already has 3 neigbhours we break from the loop
+                    if len(self._neighbours_id) == 3:
+                        break
 
     # Computing the area of each triangel
     def find_area(self, coords):
@@ -46,12 +63,3 @@ class Triangle_cell(Cell):
     @property
     def area(self):
         return self._area
-    
-    @property
-    def neighbours_id(self):
-        return self._neighbours_id
-
-    @neighbours_id.setter
-    def neighbours_id(self, id):
-        if isinstance(id, bool):
-            return self._neighbours_id
