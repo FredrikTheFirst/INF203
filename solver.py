@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from package.functions import *
+from src.package.functions import *
 from mesh_object import *
 import cv2
 
@@ -13,7 +13,6 @@ class Simulation():
         self.msh.cell_midpoint()
         self.msh.triangel_area()
         self.msh.find_neighbours()
-        self.msh.find_nuvecs()
 
         self.vfelt = np.array([v(cell.midpoint) for cell in self.msh.cells])
         self.u = np.array([starting_amount(self.x_mid, cell.midpoint) for cell in self.msh.cells])

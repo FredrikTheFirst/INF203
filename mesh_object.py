@@ -53,6 +53,7 @@ class Triangle_cell(Cell):
         self._area = None
         # The id's get stored as int
         self._neighbours_id = np.array([], dtype='int32')
+        self._neighbours_points = np.array([])
     
     def find_midpoint(self, coords):
         super().find_midpoint(coords)
@@ -65,9 +66,11 @@ class Triangle_cell(Cell):
 
             if len(matches) == 2:
                 self._neighbours_id = np.append(self._neighbours_id, cell.id)
+                self._neighbours_points = np.append(np.array(self._neighbours_points), matches)
 
+    # Calculate the nu-vectors between every neighbour of every triangle
     def find_nuvecs(self, cells):
-        self.nuvectors = np.array([nuvector(cells._points[id], self._midpoint) for id in self._neighbours_id])
+        self.nuvectors = np.array([nuvector(np.array([self.coords[i] for i in pointset]), self._midpoint) for pointset in self._neighbours_points])
 
     # Computing the area of each triangle
     def find_area(self, coords):
