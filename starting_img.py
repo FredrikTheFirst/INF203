@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from functions import *
+from package.functions import *
 from mesh_object import *
 
 mesh_file = 'bay.msh'

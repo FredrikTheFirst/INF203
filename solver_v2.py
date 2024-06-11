@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from src.package.functions import *
-from src.package.mesh import *
+from mesh_object import *
 import cv2
 
 class Simulation():
@@ -13,9 +13,19 @@ class Simulation():
         self.msh.cell_midpoint()
         self.msh.triangel_area()
         self.msh.find_neighbours()
+        self.msh.find_nuvectors()
 
         self.vfelt = np.array([v(cell.midpoint) for cell in self.msh.cells])
         self.u = np.array([starting_amount(self.x_mid, cell.midpoint) for cell in self.msh.cells])
+
+        self.matchpointlist = []
+        for tri in self.msh.get_triangles():
+            matching_coords = []
+            for neigh_id in tri.neighbours_id:
+                neigh = self.msh.cells[int(neigh_id)]
+                matching_points = set(tri.points) & set(neigh.points)
+                matching_coords.append([neigh_id] + [self.msh.coords[point] for point in matching_points])
+            self.matchpointlist.append(matching_coords)
 
     def runsim(self, frames = 500, time = 0.5):
         self.frames = frames
