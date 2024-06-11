@@ -1,11 +1,10 @@
 import meshio
 import numpy as np
-from abc import ABC, abstractmethod
 from src.package.functions import *
 
 
 
-class Cell(ABC):
+class Cell:
     def __init__(self, cell_id, points):
         # Storing a bunch of values
         self._id = cell_id
@@ -77,14 +76,14 @@ class Triangle_cell(Cell):
         self._nuvectors = np.array([nuvector(np.array([coords[i] for i in pointset]), self._midpoint) for pointset in self._neighbours_points])
 
     def find_avg_v(self, cells):
-        self.v_avgs = np.array([0.5 * (self._v + cells.get_triangles()[neighid]._v) for neighid in self._neighbours_id])
+        self._v_avgs = np.array([0.5 * (self._v + cells[neighid]._v) for neighid in self._neighbours_id])
 
     # Computing the area of each triangle
     def find_area(self, coords):
         self._area = A(coords)
     
     def dodotprods(self):
-        self._dot = np.array([el[0] @ el[1] for el in zip(self._v, self._nuvectors)])
+        self._dot = np.array([el[0] @ el[1] for el in zip(self._v_avgs, self._nuvectors)])
     
     # @property makes it so that you can access the attributes but
     # not change them 
@@ -164,12 +163,12 @@ class Mesh():
             cell.find_vel()
     
     def find_avg_velocity(self):
-        for cell in self.get_triangles():
-            cell.v_avgs(self._cells)
+        for tri in self.get_triangles():
+            tri.find_avg_v(self._cells)
     
     def find_nuvectors(self):
         for cell in self.get_triangles():
-            cell.find_avg_v(self._coords)
+            cell.find_nuvecs(self._coords)
     
     def calc_dot_prod(self):
         for cell in self.get_triangles():
