@@ -1,7 +1,7 @@
 import meshio
 import numpy as np
 from abc import ABC, abstractmethod
-from src.package.functions import midpoint, A, nuvector
+from src.package.functions import *
 
 
 
@@ -15,6 +15,9 @@ class Cell(ABC):
     # Compute the midpoint of the cell
     def find_midpoint(self, coords):
         self._midpoint = midpoint(coords)
+
+    def find_vel(self):
+        self._v = np.array([v(self._midpoint)])
     
     # @property makes it such that you can acses the attributes but
     # not change them 
@@ -69,13 +72,13 @@ class Triangle_cell(Cell):
                 self._neighbours_points = np.append(np.array(self._neighbours_points), matches)
 
     # Calculate the nu-vectors between every neighbour of every triangle
-    def find_nuvecs(self, cells):
-        self.nuvectors = np.array([nuvector(np.array([self.coords[i] for i in pointset]), self._midpoint) for pointset in self._neighbours_points])
+    def find_nuvecs(self, coords):
+        self.nuvectors = np.array([nuvector(np.array([coords[i] for i in pointset]), self._midpoint) for pointset in self._neighbours_points])
 
     # Computing the area of each triangle
     def find_area(self, coords):
         self._area = A(coords)
-
+    
     # @property makes it so that you can access the attributes but
     # not change them 
     @property
@@ -149,9 +152,13 @@ class Mesh():
         for cell in self.get_triangles():
             cell.store_neighbours(self._cells)
     
+    def find_velocity(self):
+        for cell in self.cells:
+            cell.find_vel()
+    
     def find_nuvectors(self):
         for cell in self.get_triangles():
-            cell.find_nuvecs(self._cells)
+            cell.find_nuvecs(self._coords)
     
     @property
     def cells(self):
