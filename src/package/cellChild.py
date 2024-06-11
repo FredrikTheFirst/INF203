@@ -27,11 +27,12 @@ class Triangle_cell(Cell):
     @property
     def neighbours_id(self):
         return self._neighbours_id
-
+    """
     @neighbours_id.setter
     def neighbours_id(self, id):
         if isinstance(id, int):
             return self._neighbours_id
+    """
     
     # Find and store the neighbours of each triangel
     def store_neighbours(self, cells):
@@ -44,10 +45,11 @@ class Triangle_cell(Cell):
 
                 if len(matches) == 2:
                     self._neighbours_id = np.append(self._neighbours_id, cell.id)
-
+                    
                     # If the neigbours is a triangel we store the cell`s id in the neigbhours list 
                     if type(cell).__name__ == 'Triangle_cell':
-                        cell.neighbours_id = np.append(cell.neighbours_id, self._id)
+                        cell._neighbours_id = np.append(cell._neighbours_id, self._id)
+                        
                     # If a triangel already has 3 neigbhours we break from the loop
                     if len(self._neighbours_id) == 3:
                         break
