@@ -14,6 +14,13 @@ def g(a, b, v, u):
     else:
         return b * dot
 
+#g-funksjonen, men med indre produkt allerede utregna
+def g_arr(a, b, dot):
+    if dot > 0:
+        return a * dot
+    else:
+        return b * dot
+
 
 #finner areal
 def A(coords):
