@@ -17,7 +17,7 @@ class Cell:
         self._midpoint = midpoint(coords)
 
     def find_vel(self):
-        self._v = np.array([v(self._midpoint)])
+        self._v = np.array(v(self._midpoint))
     
     # @property makes it such that you can acses the attributes but
     # not change them 
@@ -46,6 +46,9 @@ class Line_cell(Cell):
     
     def find_midpoint(self, coords):
         super().find_midpoint(coords)
+    
+    def find_vel(self):
+        super().find_vel()
 
 
 class Triangle_cell(Cell):
@@ -60,6 +63,9 @@ class Triangle_cell(Cell):
     
     def find_midpoint(self, coords):
         super().find_midpoint(coords)
+    
+    def find_vel(self):
+        super().find_vel()
     
     # Find and store the neighbours of each triangle
     def store_neighbours(self, cells):

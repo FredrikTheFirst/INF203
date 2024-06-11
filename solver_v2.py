@@ -24,7 +24,7 @@ class Simulation():
         ucopy = u.copy()
         for tri in self.msh.get_triangles():
             u_old = u[tri.id]
-            F = sum([-self.dt / tri._area * g_arr(u_old, u_ngh, dot) for u_ngh, dot in zip(u, tri._dot)])
+            F = sum([-self.dt / tri._area * g_arr(u_old, u_ngh, dot) for u_ngh, dot in zip(u[tri.neighbours_id], tri._dot)])
             ucopy[tri.id] += F
         return np.array(ucopy)
 
