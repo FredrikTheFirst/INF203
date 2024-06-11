@@ -1,7 +1,7 @@
 import numpy as np
 from src.package.cellParant import *
 
-
+# Just a comment
 class Line_cell(Cell):
     # The super() makes it so that this class inherites the method
     # from the parent class
