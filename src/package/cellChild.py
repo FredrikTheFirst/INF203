@@ -10,6 +10,9 @@ class Line_cell(Cell):
     
     def find_midpoint(self, coords):
         super().find_midpoint(coords)
+    
+    def find_vel(self):
+        super().find_vel()
 
 
 class Triangle_cell(Cell):
@@ -20,19 +23,13 @@ class Triangle_cell(Cell):
         self._area = None
         # The id's get stored as int
         self._neighbours_id = np.array([], dtype='int32')
+        self._neighbours_points = np.array([])
     
     def find_midpoint(self, coords):
         super().find_midpoint(coords)
     
-    @property
-    def neighbours_id(self):
-        return self._neighbours_id
-    """
-    @neighbours_id.setter
-    def neighbours_id(self, id):
-        if isinstance(id, int):
-            return self._neighbours_id
-    """
+    def find_vel(self):
+        super().find_vel()
     
     # Find and store the neighbours of each triangel
     def store_neighbours(self, cells):
@@ -45,10 +42,12 @@ class Triangle_cell(Cell):
 
                 if len(matches) == 2:
                     self._neighbours_id = np.append(self._neighbours_id, cell.id)
+                    self._neighbours_points = np.append(np.array(self._neighbours_points), matches)
                     
                     # If the neigbours is a triangel we store the cell`s id in the neigbhours list 
                     if type(cell).__name__ == 'Triangle_cell':
                         cell._neighbours_id = np.append(cell._neighbours_id, self._id)
+                        cell._neighbours_points = np.append(np.array(cell._neighbours_points), matches)
                         
                     # If a triangel already has 3 neigbhours we break from the loop
                     if len(self._neighbours_id) == 3:
@@ -57,9 +56,61 @@ class Triangle_cell(Cell):
     # Computing the area of each triangel
     def find_area(self, coords):
         self._area = A(coords)
+    
+    # Calculate the nu-vectors between every neighbour of every triangle
+    def find_nuvecs(self, coords):
+        self._nuvectors = np.array([nuvector(np.array([coords[i] for i in pointset]), self._midpoint) for pointset in self._neighbours_points])
+    
+    # Calculating the average of the velocities between the triangel and its neighbours
+    def find_avg_v(self, cells):
+        self._v_avgs = np.array([0.5 * (self._v + cells[neighid]._v) for neighid in self._neighbours_id])
+
+    # Calculating the dot product
+    def dodotprods(self):
+        """
+        self._posdot = np.array([])
+        self._negdot = np.array([])
+        """
+        dotlist = [el[0] @ el[1] for el in zip(self._v_avgs, self._nuvectors)]
+        self._dot = dotlist
+        """
+        for i in dotlist:
+            if i > 0:
+                self._posdot = np.append(self._posdot, i)
+                self._negdot = np.append(self._negdot, 0)
+            else:
+                self._posdot = np.append(self._posdot, 0)
+                self._negdot = np.append(self._negdot, i)
+        """
 
     # @property makes it such that you can acses the attributes but
     # not change them 
     @property
     def area(self):
         return self._area
+    
+    @property
+    def neighbours_id(self):
+        return self._neighbours_id
+    """
+    @neighbours_id.setter
+    def neighbours_id(self, id):
+        if isinstance(id, int):
+            return self._neighbours_id
+    """
+
+    @property
+    def neighbours_points(self):
+        return self._neighbours_points
+    
+    @property
+    def nuvectors(self):
+        return self._nuvectors
+    
+    @property
+    def v_avgs(self):
+        return self._v_avgs
+    
+    @property
+    def dot(self):
+        return self._dot

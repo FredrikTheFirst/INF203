@@ -6,10 +6,15 @@ class Cell:
         self._id = cell_id
         self._points = points
         self._midpoint = None
+        self._v = None
     
     # Compute the midpoint of the cell
     def find_midpoint(self, coords):
         self._midpoint = midpoint(coords)
+
+    # Finding the velocity at the midpoint
+    def find_vel(self):
+        self._v = np.array(v(self._midpoint))
     
     # @property makes it such that you can acses the attributes but
     # not change them 
@@ -24,3 +29,7 @@ class Cell:
     @property
     def midpoint(self):
         return self._midpoint
+    
+    @property
+    def v(self):
+        return self._v
