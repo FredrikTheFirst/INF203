@@ -118,3 +118,7 @@ class Simulation():
         cv2.destroyAllWindows()
         video.release()
 
+    def txtprinter(self):
+            with open("input//solution.txt", 'w') as writer:
+                for i in self._Oillist:
+                    writer.write(i)
