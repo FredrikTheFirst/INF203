@@ -18,8 +18,6 @@ class Simulation():
         self._msh.find_vel_vec_avg()
         self._msh.calc_dot_prod()
 
-        # 
-
 
         self._Oillist = np.array([[starting_amount(self._x_mid, cell.midpoint) for cell in self._msh.cells]])
 
