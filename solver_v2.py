@@ -14,50 +14,44 @@ class Simulation():
         self.msh.triangel_area()
         self.msh.find_neighbours()
         self.msh.find_nuvectors()
+        self.msh.find_velocity()
+        self.msh.find_avg_velocity()
+        self.msh.calc_dot_prod()
 
-        self.vfelt = np.array([v(cell.midpoint) for cell in self.msh.cells])
         self.u = np.array([starting_amount(self.x_mid, cell.midpoint) for cell in self.msh.cells])
 
-        self.matchpointlist = []
+        self.Oillist = np.array([self.u])
+
+    def genoil(self): # u was argument
+
+        # ucopy = u.copy()
+        ucopy = self.Oillist[-1].copy()
         for tri in self.msh.get_triangles():
-            matching_coords = []
-            for neigh_id in tri.neighbours_id:
-                neigh = self.msh.cells[int(neigh_id)]
-                matching_points = set(tri.points) & set(neigh.points)
-                matching_coords.append([neigh_id] + [self.msh.coords[point] for point in matching_points])
-            self.matchpointlist.append(matching_coords)
+            # u_old = u[tri.id]
+            u_old = self.Oillist[-1, tri.id]
+            u_old_ngh = self.Oillist[-1, tri._neighbours_id]
+            F = sum([-self.dt / tri._area * g_arr(u_old, u_ngh, dot) for u_ngh, dot in zip(u_old_ngh, tri._dot)])
+            ucopy[tri.id] += F
+        self.Oillist = np.vstack([self.Oillist, ucopy])
+
+        # return np.array(ucopy)
 
     def runsim(self, frames = 500, time = 0.5):
         self.frames = frames
         self.time = time
         self.dt = self.time/self.frames
+        
+        for i in range(self.frames):
+            self.genoil()
+            print(f"Printed u number {i}.")
+
+        """
         ulist = [self.u]
         for i in range(self.frames):
             ulist.append(self.genoil(ulist[-1]))
             print(f"Printed u number {i}.")
         self.Oillist = tuple(ulist)
-
-    def genoil(self, u):
-        ucopy = u.copy()
-        for tri in self.msh.get_triangles():
-            u_old = u[tri.id]
-            tri_v = self.vfelt[tri.id]
-            Flist = []
-            for neigh_id in tri.neighbours_id:
-                neigh = self.msh.cells[int(neigh_id)]
-                u_old_neigh = u[neigh.id]
-                neigh_v = self.vfelt[neigh.id]
-                
-                matching_points = set(tri.points) & set(neigh.points)
-                matching_coords = np.array([self.msh.coords[point] for point in matching_points])
-
-                nu = nuvector(matching_coords, tri.midpoint)
-                v = 0.5*(tri_v + neigh_v)
-                G = g(u_old, u_old_neigh, v, nu)
-                F = dOil(self.dt, tri.area, G)
-                Flist.append(F)
-            ucopy[tri.id] += sum(Flist)
-        return np.array(ucopy)
+        """
 
     def photo(self, i):
         el = self.Oillist[i]

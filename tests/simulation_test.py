@@ -1,4 +1,4 @@
-from solver import Simulation
+from solver_v2 import Simulation
 
 testrun = Simulation("bay.msh")
 print("Startup done")

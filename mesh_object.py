@@ -1,23 +1,23 @@
 import meshio
 import numpy as np
-from abc import ABC, abstractmethod
 from src.package.functions import *
 
 
 
-class Cell(ABC):
+class Cell:
     def __init__(self, cell_id, points):
         # Storing a bunch of values
         self._id = cell_id
         self._points = points
         self._midpoint = None
+        self.oil = 0
     
     # Compute the midpoint of the cell
     def find_midpoint(self, coords):
         self._midpoint = midpoint(coords)
 
     def find_vel(self):
-        self._v = np.array([v(self._midpoint)])
+        self._v = np.array(v(self._midpoint))
     
     # @property makes it such that you can acses the attributes but
     # not change them 
@@ -46,6 +46,9 @@ class Line_cell(Cell):
     
     def find_midpoint(self, coords):
         super().find_midpoint(coords)
+    
+    def find_vel(self):
+        super().find_vel()
 
 
 class Triangle_cell(Cell):
@@ -61,6 +64,9 @@ class Triangle_cell(Cell):
     def find_midpoint(self, coords):
         super().find_midpoint(coords)
     
+    def find_vel(self):
+        super().find_vel()
+    
     # Find and store the neighbours of each triangle
     def store_neighbours(self, cells):
         my_points = set(self._points)
@@ -73,11 +79,17 @@ class Triangle_cell(Cell):
 
     # Calculate the nu-vectors between every neighbour of every triangle
     def find_nuvecs(self, coords):
-        self.nuvectors = np.array([nuvector(np.array([coords[i] for i in pointset]), self._midpoint) for pointset in self._neighbours_points])
+        self._nuvectors = np.array([nuvector(np.array([coords[i] for i in pointset]), self._midpoint) for pointset in self._neighbours_points])
+
+    def find_avg_v(self, cells):
+        self._v_avgs = np.array([0.5 * (self._v + cells[neighid]._v) for neighid in self._neighbours_id])
 
     # Computing the area of each triangle
     def find_area(self, coords):
         self._area = A(coords)
+    
+    def dodotprods(self):
+        self._dot = np.array([el[0] @ el[1] for el in zip(self._v_avgs, self._nuvectors)])
     
     # @property makes it so that you can access the attributes but
     # not change them 
@@ -156,10 +168,18 @@ class Mesh():
         for cell in self.cells:
             cell.find_vel()
     
+    def find_avg_velocity(self):
+        for tri in self.get_triangles():
+            tri.find_avg_v(self._cells)
+    
     def find_nuvectors(self):
         for cell in self.get_triangles():
             cell.find_nuvecs(self._coords)
     
+    def calc_dot_prod(self):
+        for cell in self.get_triangles():
+            cell.dodotprods()
+
     @property
     def cells(self):
         return self._cells
