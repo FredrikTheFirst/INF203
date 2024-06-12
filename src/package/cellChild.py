@@ -84,3 +84,19 @@ class Triangle_cell(Cell):
         if isinstance(id, int):
             return self._neighbours_id
     """
+
+    @property
+    def neighbours_points(self):
+        return self._neighbours_points
+    
+    @property
+    def nuvectors(self):
+        return self._nuvectors
+    
+    @property
+    def v_avgs(self):
+        return self._v_avgs
+    
+    @property
+    def dot(self):
+        return self._dot

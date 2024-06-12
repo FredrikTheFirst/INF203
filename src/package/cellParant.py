@@ -6,6 +6,7 @@ class Cell:
         self._id = cell_id
         self._points = points
         self._midpoint = None
+        self._v = None
     
     # Compute the midpoint of the cell
     def find_midpoint(self, coords):
@@ -28,3 +29,7 @@ class Cell:
     @property
     def midpoint(self):
         return self._midpoint
+    
+    @property
+    def v(self):
+        return self._v

@@ -23,10 +23,9 @@ class Simulation():
     def genoil(self):
         ucopy = self._Oillist[-1].copy()
         for tri in self._msh.get_triangles():
-            # u_old = u[tri.id]
             u_old = ucopy[tri.id]
             u_old_ngh = ucopy[tri._neighbours_id]
-            F = sum([-self._dt / tri._area * g_arr(u_old, u_ngh, dot) for u_ngh, dot in zip(u_old_ngh, tri._dot)])
+            F = sum([-self._dt / tri.area * g_arr(u_old, u_ngh, dot) for u_ngh, dot in zip(u_old_ngh, tri.dot)])
             ucopy[tri.id] += F
         self._Oillist = np.vstack([self._Oillist, ucopy])
 
