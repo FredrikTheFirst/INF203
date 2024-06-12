@@ -20,23 +20,38 @@ class Simulation():
 
         self.u = np.array([starting_amount(self.x_mid, cell.midpoint) for cell in self.msh.cells])
 
-    def genoil(self, u):
-        ucopy = u.copy()
+        self.Oillist = np.array([self.u])
+
+    def genoil(self): # u was argument
+
+        # ucopy = u.copy()
+        ucopy = self.Oillist[-1].copy()
         for tri in self.msh.get_triangles():
-            u_old = u[tri.id]
-            F = sum([-self.dt / tri._area * g_arr(u_old, u_ngh, dot) for u_ngh, dot in zip(u[tri.neighbours_id], tri._dot)])
+            # u_old = u[tri.id]
+            u_old = self.Oillist[-1, tri.id]
+            u_old_ngh = self.Oillist[-1, tri._neighbours_id]
+            F = sum([-self.dt / tri._area * g_arr(u_old, u_ngh, dot) for u_ngh, dot in zip(u_old_ngh, tri._dot)])
             ucopy[tri.id] += F
-        return np.array(ucopy)
+        self.Oillist = np.vstack([self.Oillist, ucopy])
+
+        # return np.array(ucopy)
 
     def runsim(self, frames = 500, time = 0.5):
         self.frames = frames
         self.time = time
         self.dt = self.time/self.frames
+        
+        for i in range(self.frames):
+            self.genoil()
+            print(f"Printed u number {i}.")
+
+        """
         ulist = [self.u]
         for i in range(self.frames):
             ulist.append(self.genoil(ulist[-1]))
             print(f"Printed u number {i}.")
         self.Oillist = tuple(ulist)
+        """
 
     def photo(self, i):
         el = self.Oillist[i]
