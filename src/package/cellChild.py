@@ -10,6 +10,9 @@ class Line_cell(Cell):
     
     def find_midpoint(self, coords):
         super().find_midpoint(coords)
+    
+    def find_vel(self):
+        super().find_vel()
 
 
 class Triangle_cell(Cell):
@@ -25,15 +28,8 @@ class Triangle_cell(Cell):
     def find_midpoint(self, coords):
         super().find_midpoint(coords)
     
-    @property
-    def neighbours_id(self):
-        return self._neighbours_id
-    """
-    @neighbours_id.setter
-    def neighbours_id(self, id):
-        if isinstance(id, int):
-            return self._neighbours_id
-    """
+    def find_vel(self):
+        super().find_vel()
     
     # Find and store the neighbours of each triangel
     def store_neighbours(self, cells):
@@ -64,9 +60,27 @@ class Triangle_cell(Cell):
     # Calculate the nu-vectors between every neighbour of every triangle
     def find_nuvecs(self, coords):
         self._nuvectors = np.array([nuvector(np.array([coords[i] for i in pointset]), self._midpoint) for pointset in self._neighbours_points])
+    
+    # Calculating the average of the velocities between the triangel and its neighbours
+    def find_avg_v(self, cells):
+        self._v_avgs = np.array([0.5 * (self._v + cells[neighid]._v) for neighid in self._neighbours_id])
+
+    # Calculating the dot product
+    def dodotprods(self):
+        self._dot = np.array([el[0] @ el[1] for el in zip(self._v_avgs, self._nuvectors)])
 
     # @property makes it such that you can acses the attributes but
     # not change them 
     @property
     def area(self):
         return self._area
+    
+    @property
+    def neighbours_id(self):
+        return self._neighbours_id
+    """
+    @neighbours_id.setter
+    def neighbours_id(self, id):
+        if isinstance(id, int):
+            return self._neighbours_id
+    """
