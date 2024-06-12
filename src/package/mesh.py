@@ -71,6 +71,11 @@ class Mesh():
             tri.store_neighbours(cells)
             cells.remove(tri)
     
+    # Finding the scaled normalvector of the sides of triangels
+    def find_nuvectors(self):
+        for cell in self.get_triangles():
+            cell.find_nuvecs(self._coords)
+    
     @property
     def cells(self):
         return self._cells
