@@ -95,4 +95,7 @@ class Simulation():
 
         cv2.destroyAllWindows()
         video.release()
+    
+    def txtprinter(self):
+        
 
