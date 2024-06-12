@@ -1,2 +1,5 @@
 meshio
 numpy
+matplotlib
+opencv-python
+pytest
