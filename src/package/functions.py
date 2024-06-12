@@ -2,8 +2,15 @@ import numpy as np
 
 
 #finner hastighet i et punkt (midtpunkt)
+
 def v(x):
     return np.array([x[1] - 0.2*x[0], -x[0]])
+"""
+def v(x):
+    return np.array([[-0.2, 1], [-1, 0]]) @ x
+"""
+
+
 
 
 #g-funksjonen
@@ -16,6 +23,7 @@ def g(a, b, v, u):
 
 #g-funksjonen, men med indre produkt allerede utregna
 def g_arr(a, b, dot):
+    # return a * posdot + b * negdot
     if dot > 0:
         return a * dot
     else:

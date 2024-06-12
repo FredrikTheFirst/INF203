@@ -71,6 +71,26 @@ class Mesh():
             tri.store_neighbours(cells)
             cells.remove(tri)
     
+    # Finding the scaled normalvector of the sides of triangels
+    def find_nuvectors(self):
+        for cell in self.get_triangles():
+            cell.find_nuvecs(self._coords)
+    
+    # Finding the vector of each cell given a vector field
+    def find_vel_vec(self):
+        for cell in self.cells:
+            cell.find_vel()
+
+    # Find the average of the velocity vectors of neighbouring cells
+    def find_vel_vec_avg(self):
+        for tri in self.get_triangles():
+            tri.find_avg_v(self._cells)
+    
+    # Something smart
+    def calc_dot_prod(self):
+        for tri in self.get_triangles():
+            tri.dodotprods()
+    
     @property
     def cells(self):
         return self._cells
