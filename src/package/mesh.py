@@ -88,8 +88,8 @@ class Mesh():
     
     # Something smart
     def calc_dot_prod(self):
-        for cell in self.get_triangles():
-            cell.dodotprods()
+        for tri in self.get_triangles():
+            tri.dodotprods()
     
     @property
     def cells(self):

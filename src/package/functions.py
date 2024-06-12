@@ -23,6 +23,7 @@ def g(a, b, v, u):
 
 #g-funksjonen, men med indre produkt allerede utregna
 def g_arr(a, b, dot):
+    # return a * posdot + b * negdot
     if dot > 0:
         return a * dot
     else:

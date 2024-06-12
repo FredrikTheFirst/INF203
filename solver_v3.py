@@ -18,14 +18,25 @@ class Simulation():
         self._msh.find_vel_vec_avg()
         self._msh.calc_dot_prod()
 
+        # 
+
+
         self._Oillist = np.array([[starting_amount(self._x_mid, cell.midpoint) for cell in self._msh.cells]])
 
     def genoil(self):
         ucopy = self._Oillist[-1].copy()
         for tri in self._msh.get_triangles():
             u_old = ucopy[tri.id]
-            u_old_ngh = ucopy[tri._neighbours_id]
-            F = sum([-self._dt / tri.area * g_arr(u_old, u_ngh, dot) for u_ngh, dot in zip(u_old_ngh, tri.dot)])
+            u_old_ngh = ucopy[tri.neighbours_id]
+
+            # u_old_array = np.array([u_old for i in range(3)])
+
+            # dot_list = [g_arr(u_old, u_ngh, pd, nd) for u_ngh, pd, nd in (u_old_ngh, tri._posdot, tri._negdot)]
+
+            # F = -self._dt / tri.area * sum(g_arr(u_old_array, u_old_ngh, tri._posdot, tri._negdot))
+
+
+            F = -self._dt / tri.area * sum([g_arr(u_old, u_ngh, dot) for u_ngh, dot in zip(u_old_ngh, tri.dot)])
             ucopy[tri.id] += F
         self._Oillist = np.vstack([self._Oillist, ucopy])
 
