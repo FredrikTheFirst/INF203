@@ -24,7 +24,6 @@ class Simulation():
         self._msh.find_vel_vec_avg()
         self._msh.calc_dot_prod()
 
-
         self._Oillist = np.array([[starting_amount(self._x_mid, cell.midpoint) for cell in self._msh.cells]])
 
     def genoil(self):
@@ -175,12 +174,16 @@ t = {step:.3g}:     {self._oil_fishinggrounds[i]:.5g}'''
         logger.setLevel(log.INFO)
         logger.info(information)
 
-
-
-
     def txtprinter(self):
         filename = "input/solution.txt"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, 'w') as writer:
             for i in self._Oillist[-1]:
                 writer.write(f"{i}\n")
+    
+    def restorerun(self, restorefile):
+        if restorefile != None:
+            with open(restorefile, 'r') as data:
+                self._Oillist = np.array([[eval(i.strip('/n')) for i in data.readlines()]])
+        else:
+            pass
