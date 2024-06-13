@@ -67,13 +67,14 @@ class Triangle_cell(Cell):
 
     # Calculating the dot product
     def dodotprods(self):
-        """
+        
         self._posdot = np.array([])
         self._negdot = np.array([])
-        """
+        
         dotlist = [el[0] @ el[1] for el in zip(self._v_avgs, self._nuvectors)]
+        
         self._dot = dotlist
-        """
+        
         for i in dotlist:
             if i > 0:
                 self._posdot = np.append(self._posdot, i)
@@ -81,7 +82,7 @@ class Triangle_cell(Cell):
             else:
                 self._posdot = np.append(self._posdot, 0)
                 self._negdot = np.append(self._negdot, i)
-        """
+        
 
     # @property makes it such that you can acses the attributes but
     # not change them 
@@ -111,6 +112,8 @@ class Triangle_cell(Cell):
     def v_avgs(self):
         return self._v_avgs
     
+    
     @property
     def dot(self):
         return self._dot
+    
