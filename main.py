@@ -1,6 +1,7 @@
 import toml
 import argparse
 from src.package.solver import *
+import re
 
 
 def toml_input(pth):
@@ -20,20 +21,24 @@ def toml_input(pth):
       t_start = settings.get('tStart')
       t_end = settings.get('tEnd')
       photo_steps = io.get('writeFrequency')
+      restartFile = io.get('restartFile')
       dt = t_end - t_start
 
       for parameter in (mesh_file, t_end):
          if parameter == None:
             raise NameError('The toml file is missing enteries')
 
-      sim = Simulation(mesh_file)
-      sim.restorerun('input/solution.txt')
+      x = re.replace("config_files/", "", pth)
+      file_name = re.replace(".toml", "", pth)
+
+      sim = Simulation(mesh_file, file_name)
+      sim.restorerun(restartFile)
       sim.runsim(frames, dt)
       sim.photos(photo_steps)
       #sim.txtprinter()
          
 
-pth = 'config_files\example_config_file.toml'
+pth = 'config_files/example_config_file.toml'
 
 toml_input(pth)
 

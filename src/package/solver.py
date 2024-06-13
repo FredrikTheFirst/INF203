@@ -8,13 +8,15 @@ import cv2
 import os
 
 class Simulation():
-    def __init__(self, filename, midpoint = np.array([0.35, 0.45]), boarders=[[0.0, 0.45], [0.0, 0.2]]):
+    def __init__(self, filename, resfold, midpoint = np.array([0.35, 0.45]), boarders=[[0.0, 0.45], [0.0, 0.2]]):
         self._filename = filename
         self._x_mid = midpoint
         self._boarders = boarders
         self._msh = Mesh(filename)
         self._oil_fishinggrounds = np.array([])
         self._fr = None
+        self._resfoldname = f"results/{resfold}/"
+        os.makedirs(os.path.dirname(self._resfoldname), exist_ok=True)
 
         self._msh.cell_midpoint()
         self._msh.triangel_area()
@@ -111,7 +113,7 @@ class Simulation():
         plt.gca().set_aspect('equal')
 
         # Show plot
-        plt.savefig(f"tmp\start_img_{i}.png")
+        plt.savefig(f"{self._resfoldname}img_{i}.png")
         plt.close()
 
     def photos(self, intv):
@@ -125,7 +127,7 @@ class Simulation():
     def makevideo(self):
 
         # Get the list of image files in the directory
-        images = [f"tmp/start_img_{i}.png" for i in range(0,25)]
+        images = [f"{self._resfoldname}img_{i}.png" for i in range(0,25)]
 
         # determine dimension from first image
         frame = cv2.imread(images[0])
@@ -133,7 +135,7 @@ class Simulation():
 
         ## Define the codec and create a VideoWriter object
         fourcc = cv2.VideoWriter_fourcc(*'mp4v') # or 'XVID', 'DIVX', 'mp4v' etc.
-        video = cv2.VideoWriter("video.AVI", fourcc, self._fr, (width, height)) # 5 frames per second
+        video = cv2.VideoWriter(f"{self._resfoldname}video.AVI", fourcc, self._fr, (width, height)) # 5 frames per second
 
         for image in images:
             video.write(cv2.imread(image))
@@ -175,7 +177,7 @@ t = {step:.3g}:     {self._oil_fishinggrounds[i]:.5g}'''
         logger.info(information)
 
     def txtprinter(self):
-        filename = "input/solution.txt"
+        filename = f"{self._resfoldname}solution.txt"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, 'w') as writer:
             for i in self._Oillist[-1]:
