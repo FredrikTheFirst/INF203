@@ -27,9 +27,10 @@ def toml_input(pth):
             raise NameError('The toml file is missing enteries')
 
       sim = Simulation(mesh_file)
+      sim.restorerun('input/solution.txt')
       sim.runsim(frames, dt)
-      #sim.photos(photo_steps)
-      sim.txtprinter()
+      sim.photos(photo_steps)
+      #sim.txtprinter()
          
 
 pth = 'config_files\example_config_file.toml'

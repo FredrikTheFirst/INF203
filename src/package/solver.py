@@ -6,9 +6,9 @@ import cv2
 import os
 
 class Simulation():
-    def __init__(self, filename, midpoint = np.array([0.35, 0.45])):
+    def __init__(self, filename, midpoint = [0.35, 0.45]):
         self._filename = filename
-        self._x_mid = midpoint
+        self._x_mid = np.array(midpoint)
         self._msh = Mesh(filename)
 
         self._msh.cell_midpoint()
@@ -18,7 +18,6 @@ class Simulation():
         self._msh.find_vel_vec()
         self._msh.find_vel_vec_avg()
         self._msh.calc_dot_prod()
-
 
         self._Oillist = np.array([[starting_amount(self._x_mid, cell.midpoint) for cell in self._msh.cells]])
 
@@ -125,3 +124,10 @@ class Simulation():
         with open(filename, 'w') as writer:
             for i in self._Oillist[-1]:
                 writer.write(f"{i}\n")
+    
+    def restorerun(self, restorefile):
+        if restorefile != None:
+            with open(restorefile, 'r') as data:
+                self._Oillist = np.array([[eval(i.strip('/n')) for i in data.readlines()]])
+        else:
+            pass
