@@ -20,9 +20,12 @@ def toml_input(pth):
       t_start = settings.get('tStart')
       t_end = settings.get('tEnd')
       photo_steps = io.get('writeFrequency')
-      dt = t_end - t_start
+      boarders = geometry.get('boarders')
+      restartFile = io.get('restartFile')
+      log_name = io.get('logName')
 
-      for parameter in (mesh_file, t_end):
+
+      for parameter in (mesh_file, t_end, boarders):
          if parameter == None:
             raise NameError('The toml file is missing enteries')
 
@@ -30,8 +33,9 @@ def toml_input(pth):
       sim.restorerun('input/solution.txt')
       sim.runsim(frames, t_start, t_end)
       sim.fishinggrounds()
-      sim.photos(photo_steps)
-      sim.make_log()
+      if photo_steps != None:
+         sim.photos(photo_steps)
+      sim.make_log(log_name)
       #sim.txtprinter()
          
 
@@ -41,7 +45,7 @@ def toml_input(pth):
 
 def parse_input():
     parser = argparse.ArgumentParser(description='Use this program to simulate an oil spill')
-    parser.add_argument('-f', '--file', default='“input.toml', help='Prvide a toml file or a folder containing a toml file')
+    parser.add_argument('-f', '--file', default='“input.toml', help='Prvide a toml file or a folder containing one or multiple toml files')
 
     args = parser.parse_args()
     file = args.file
