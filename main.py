@@ -28,14 +28,27 @@ def toml_input(pth):
 
       sim = Simulation(mesh_file)
       sim.restorerun('input/solution.txt')
-      sim.runsim(frames, dt)
+      sim.runsim(frames, t_start, t_end)
+      sim.fishinggrounds()
       sim.photos(photo_steps)
+      sim.make_log()
       #sim.txtprinter()
          
 
-pth = 'config_files\example_config_file.toml'
+# pth = 'config_files\example_config_file.toml'
 
-toml_input(pth)
+# toml_input(pth)
+
+def parse_input():
+    parser = argparse.ArgumentParser(description='Use this program to simulate an oil spill')
+    parser.add_argument('-f', '--file', default='“input.toml', help='Prvide a toml file or a folder containing a toml file')
+
+    args = parser.parse_args()
+    file = args.file
+    return file
+
+file = parse_input()
+toml_input(file)
 
 
 
