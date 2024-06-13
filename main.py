@@ -2,23 +2,38 @@ import toml
 import argparse
 from src.package.solver import *
 
-with open('config_files\example_config_file.toml', 'r') as file:
-   config = toml.load(file)
-   settings = config.get('settings', {})
-   geometry = config.get('geometry', {})
-   io = config.get('IO', {})
 
-   mesh_file = geometry.get('meshName')
-   frames = settings.get('nSteps')
-   t_start = settings.get('tStart')
-   t_end = settings.get('tEnd')
-   photo_steps = io.get('writeFrequency')
-   dt = t_end - t_start
+def toml_input(pth):
+   with open(pth, 'r') as file:
+      config = toml.load(file)
 
+      settings = config.get('settings', {})
+      geometry = config.get('geometry', {})
+      io = config.get('IO', {})
 
-   sim = Simulation(mesh_file)
-   sim.runsim(frames, dt)
-   sim.photos(photo_steps)
+      for parameter in (settings, geometry, io):
+         if parameter == {}:
+            raise NameError('The structure of the toml file is not as expected')
+      
+      mesh_file = geometry.get('meshName')
+      frames = settings.get('nSteps')
+      t_start = settings.get('tStart')
+      t_end = settings.get('tEnd')
+      photo_steps = io.get('writeFrequency')
+      dt = t_end - t_start
+
+      for parameter in (mesh_file, t_end):
+         if parameter == None:
+            raise NameError('The toml file is missing enteries')
+
+      sim = Simulation(mesh_file)
+      sim.runsim(frames, dt)
+      sim.photos(photo_steps)
+         
+
+pth = 'config_files\example_config_file.toml'
+
+toml_input(pth)
 
 
 
