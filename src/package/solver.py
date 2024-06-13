@@ -3,6 +3,7 @@ import numpy as np
 from src.package.functions import *
 from src.package.mesh import *
 import cv2
+import os
 
 class Simulation():
     def __init__(self, filename, midpoint = np.array([0.35, 0.45])):
@@ -96,6 +97,7 @@ class Simulation():
     def photos(self, intv):
         for i in range(0, self._frames, intv):
             self.photo(i)
+            print(f"Generated photo {i}")
 
     def makevideo(self, framerate = 5):
         
@@ -118,6 +120,8 @@ class Simulation():
         video.release()
 
     def txtprinter(self):
-        with open("input//solution.txt", 'w') as writer:
-            for i in self._Oillist:
-                writer.write(i)
+        filename = "input/solution.txt"
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        with open(filename, 'w') as writer:
+            for i in self._Oillist[-1]:
+                writer.write(f"{i}\n")
