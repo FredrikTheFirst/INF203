@@ -1,6 +1,6 @@
 import toml
 import argparse
-from solver_v3 import *
+from src.package.solver import *
 
 with open('config_files\example_config_file.toml', 'r') as file:
    config = toml.load(file)
