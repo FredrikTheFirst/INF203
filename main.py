@@ -28,8 +28,8 @@ def toml_input(pth):
          if parameter == None:
             raise NameError('The toml file is missing enteries')
 
-      x = re.replace("config_files/", "", pth)
-      file_name = re.replace(".toml", "", pth)
+      x = re.sub("config_files/", "", pth)
+      file_name = re.sub(".toml", "", pth)
 
       sim = Simulation(mesh_file, file_name)
       sim.restorerun(restartFile)
