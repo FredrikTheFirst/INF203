@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import cv2
+import logging as log
 from src.package.functions import *
 from src.package.mesh import *
-import cv2
 
 class Simulation():
     def __init__(self, filename, midpoint = np.array([0.35, 0.45])):
@@ -116,4 +117,17 @@ class Simulation():
 
         cv2.destroyAllWindows()
         video.release()
+    
+    def make_log(self, logfile='logfile'):
+        logger = log.getLogger('loggerName')
+        handler = log.FileHandler(str(logfile)+'.log', mode='w')
+        formatter = log.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.setLevel(log.INFO)
+        logger.info(f'My info is awsome')
+
+
+
 
