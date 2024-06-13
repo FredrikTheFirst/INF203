@@ -1,4 +1,4 @@
-from solver_v3 import Simulation
+from src.package.solver import Simulation
 
 testrun = Simulation("bay.msh")
 
