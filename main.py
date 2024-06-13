@@ -28,7 +28,8 @@ def toml_input(pth):
 
       sim = Simulation(mesh_file)
       sim.runsim(frames, dt)
-      sim.photos(photo_steps)
+      #sim.photos(photo_steps)
+      sim.txtprinter()
          
 
 pth = 'config_files\example_config_file.toml'
