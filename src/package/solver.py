@@ -130,9 +130,6 @@ class Simulation():
         logger.setLevel(log.INFO)
         logger.info(f'My info is awsome')
 
-
-
-
     def txtprinter(self):
         filename = "input/solution.txt"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
