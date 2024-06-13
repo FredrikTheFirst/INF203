@@ -33,6 +33,7 @@ class Simulation():
 
             # F = -self._dt / tri.area * sum(g_arr(u_old_array, u_old_ngh, tri._posdot, tri._negdot))
 
+            # F = -self._dt / tri.area * sum(u_old * tri._posdot + u_old_ngh * tri._negdot)
 
             F = -self._dt / tri.area * sum([g_arr(u_old, u_ngh, dot) for u_ngh, dot in zip(u_old_ngh, tri.dot)])
             ucopy[tri.id] += F
