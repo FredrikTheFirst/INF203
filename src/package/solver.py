@@ -8,10 +8,13 @@ import cv2
 import os
 
 class Simulation():
-    def __init__(self, filename, midpoint = [0.35, 0.45]):
+    def __init__(self, filename, midpoint = np.array([0.35, 0.45]), boarders=[[0.0, 0.45], [0.0, 0.2]]):
         self._filename = filename
-        self._x_mid = np.array(midpoint)
+        self._x_mid = midpoint
+        self._boarders = boarders
         self._msh = Mesh(filename)
+        self._oil_fishinggrounds = np.array([])
+        self._fr = None
 
         self._msh.cell_midpoint()
         self._msh.triangel_area()
@@ -43,10 +46,12 @@ class Simulation():
 
         # return np.array(ucopy)
 
-    def runsim(self, frames = 500, time = 0.5):
+    def runsim(self, frames = 500, t_start=0, t_end=0.5):
         self._frames = frames
-        self._time = time
-        self._dt = time / frames
+        self._t_start = t_start
+        self._t_end = t_end
+        self._time = t_end-t_start
+        self._dt = self._time / frames
         
         for i in range(self._frames):
             self.genoil()
@@ -59,6 +64,20 @@ class Simulation():
             print(f"Printed u number {i}.")
         self.Oillist = tuple(ulist)
         """
+
+    def fishinggrounds(self):
+        self._included_ids = np.array([], dtype='int32')
+
+        for cell in self._msh.cells:
+            include = False
+            for coor, limit in zip(cell.midpoint, self._boarders):
+                if coor > limit[0] and coor < limit[1]:
+                    include = True
+            if include:
+                self._included_ids = np.append(self._included_ids, cell.id)
+        self._oil_fishinggrounds = np.array([sum(oil[self._included_ids]) for oil in self._Oillist])
+
+
 
     def photo(self, i):
         el = self._Oillist[i]
@@ -96,13 +115,15 @@ class Simulation():
         plt.close()
 
     def photos(self, intv):
+        self._fr = intv
         for i in range(0, self._frames, intv):
             self.photo(i)
             print(f"Generated photo {i}")
 
-    def makevideo(self, framerate = 5):
-        
-        self._fr = framerate
+    
+
+    def makevideo(self):
+
         # Get the list of image files in the directory
         images = [f"tmp/start_img_{i}.png" for i in range(0,25)]
 
@@ -123,12 +144,35 @@ class Simulation():
     def make_log(self, logfile='logfile'):
         logger = log.getLogger('loggerName')
         handler = log.FileHandler(str(logfile)+'.log', mode='w')
-        formatter = log.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        formatter = log.Formatter('%(asctime)s - %(levelname)s:\n%(message)s')
+
+        information = f'''
+nSteps: {self._frames}
+tStart: {self._t_start}
+tEnd: {self._t_end}
+meshName: {self._filename}
+Fishinggrounds: {self._boarders}'''
+        
+        if self._fr != None:
+            information += f'''
+writeFrequency = {self._fr}'''
+
+        information += '''
+
+Oil in fishingrounds at time:
+'''
+        for i in range(self._frames+1):
+            step = self._t_start + i * self._dt
+            information += f'''
+t = {step:.3g}:     {self._oil_fishinggrounds[i]:.5g}'''
+
+
+
 
         handler.setFormatter(formatter)
         logger.addHandler(handler)
         logger.setLevel(log.INFO)
-        logger.info(f'My info is awsome')
+        logger.info(information)
 
     def txtprinter(self):
         filename = "input/solution.txt"
