@@ -2,6 +2,7 @@ import toml
 import argparse
 from src.package.solver import *
 import re
+from pathlib import Path
 
 
 def toml_input(pth):
@@ -39,7 +40,7 @@ def toml_input(pth):
       print("A photo of the final step has been generated")
       sim.photos(photo_steps)
 
-      if len(photo_steps) != 0:
+      if photo_steps:
          sim.makevideo()
          print("A video of the simulation has been generated")
       else:
@@ -50,18 +51,26 @@ def toml_input(pth):
          sim.txtprinter()
          print("A solution file was added to the input-folder")
       else:
-         print("No solutiin file was added to the input folder")
+         print("No solution file was added to the input folder")
       
       sim.make_log()
       print("A log of the simulation has been written")
       print("Simulation done!")
-         
-pth = input("Enter address of config file here, or leave blank for the example file: ")
+
+
+pth = input("Enter the path of your config file here, or the path of your folder of toml-files (leave blank for the example file): ")
 if len(pth) == 0:
    pth = 'config_files/example_config_file.toml'
 
-toml_input(pth)
-
+if os.path.exists(pth) == False:
+   print("Path you have entered doesn't exist")
+if os.path.isfile(pth) == True:
+   toml_input(pth)
+if os.path.isdir(pth) == True:
+   p = Path(pth).glob('**/*')
+   tomlfils = [fil for fil in p if type(fil) == toml]
+   for file in tomlfils:
+      toml_input(file)
 
 
 

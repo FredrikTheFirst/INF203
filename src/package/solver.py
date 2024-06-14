@@ -57,7 +57,6 @@ class Simulation():
         
         for i in range(self._frames):
             self.genoil()
-            print(f"Printed u number {i}.")
 
         """
         ulist = [self.u]
