@@ -8,13 +8,15 @@ import cv2
 import os
 
 class Simulation():
-    def __init__(self, filename, midpoint = np.array([0.35, 0.45]), boarders=[[0.0, 0.45], [0.0, 0.2]]):
+    def __init__(self, filename, resfold, midpoint = np.array([0.35, 0.45]), boarders=[[0.0, 0.45], [0.0, 0.2]]):
         self._filename = filename
         self._x_mid = midpoint
         self._boarders = boarders
         self._msh = Mesh(filename)
         self._oil_fishinggrounds = np.array([])
         self._fr = None
+        self._resfoldname = f"results/{resfold}/"
+        os.makedirs(os.path.dirname(self._resfoldname), exist_ok=True)
 
         self._msh.cell_midpoint()
         self._msh.triangel_area()
@@ -55,7 +57,6 @@ class Simulation():
         
         for i in range(self._frames):
             self.genoil()
-            print(f"Printed u number {i}.")
 
         """
         ulist = [self.u]
@@ -111,29 +112,29 @@ class Simulation():
         plt.gca().set_aspect('equal')
 
         # Show plot
-        plt.savefig(f"tmp\start_img_{i}.png")
+        plt.savefig(f"{self._resfoldname}img_{i}.png")
         plt.close()
 
     def photos(self, intv):
-        self._fr = intv
+        self._intv = intv
         for i in range(0, self._frames, intv):
             self.photo(i)
             print(f"Generated photo {i}")
 
-    
+
 
     def makevideo(self):
 
+        self._framerate = (self._frames / self._intv) / (self._time * 10)
         # Get the list of image files in the directory
-        images = [f"tmp/start_img_{i}.png" for i in range(0,25)]
-
+        images = [f"{self._resfoldname}img_{i}.png" for i in range(0, self._frames, self._intv)]
         # determine dimension from first image
         frame = cv2.imread(images[0])
         height, width, layers = frame.shape
 
         ## Define the codec and create a VideoWriter object
         fourcc = cv2.VideoWriter_fourcc(*'mp4v') # or 'XVID', 'DIVX', 'mp4v' etc.
-        video = cv2.VideoWriter("video.AVI", fourcc, self._fr, (width, height)) # 5 frames per second
+        video = cv2.VideoWriter(f"{self._resfoldname}video.AVI", fourcc, self._framerate, (width, height))
 
         for image in images:
             video.write(cv2.imread(image))
@@ -143,7 +144,8 @@ class Simulation():
     
     def make_log(self, logfile='logfile'):
         logger = log.getLogger('loggerName')
-        handler = log.FileHandler(str(logfile)+'.log', mode='w')
+        logplace = f"{self._resfoldname}{logfile}"
+        handler = log.FileHandler(str(logplace)+'.log', mode='w')
         formatter = log.Formatter('%(asctime)s - %(levelname)s:\n%(message)s')
 
         information = f'''

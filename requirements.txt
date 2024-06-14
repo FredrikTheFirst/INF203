@@ -6,3 +6,6 @@ pytest
 toml
 argparse
 logging
+re
+os
+cv2
