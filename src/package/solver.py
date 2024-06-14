@@ -178,7 +178,7 @@ t = {step:.3g}:     {self._oil_fishinggrounds[i]:.5g}'''
         logger.info(information)
 
     def txtprinter(self):
-        filename = f"{self._resfoldname}solution.txt"
+        filename = "input/solution.txt"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, 'w') as writer:
             for i in self._Oillist[-1]:

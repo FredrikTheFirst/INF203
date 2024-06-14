@@ -36,12 +36,25 @@ def toml_input(pth):
       print("Generated all oil for the given time interval")
       sim.fishinggrounds()
       sim.photo(sim._frames-1)
-      print("Photo of the final step has been generated")
+      print("A photo of the final step has been generated")
       sim.photos(photo_steps)
-      sim.makevideo()
-      print("A video of the simulation has been generated")
-      sim.txtprinter()
+
+      if len(photo_steps) != 0:
+         sim.makevideo()
+         print("A video of the simulation has been generated")
+      else:
+         print("No video was generated, because no writeFrequency parameter was given in the input toml-file")
+
+      saveFile = input("What would you like to name the solution-file of your code? (leave blank for no solution-file): ")
+      if len(saveFile) != 0:
+         sim.txtprinter()
+         print("A solution file was added to the input-folder")
+      else:
+         print("No solutiin file was added to the input folder")
+      
       sim.make_log()
+      print("A log of the simulation has been written")
+      print("Simulation done!")
          
 pth = input("Enter address of config file here, or leave blank for the example file: ")
 if len(pth) == 0:
