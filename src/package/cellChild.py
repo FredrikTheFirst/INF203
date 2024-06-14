@@ -67,7 +67,7 @@ class Triangle_cell(Cell):
     
     # Calculating the average of the velocities between the triangel and its neighbours
     def find_avg_v(self, cells):
-        self._v_avgs = np.array([0.5 * (self._v + cells[neighid]._v) for neighid in self._neighbours_id])
+        self._v_avgs = np.array([0.5 * (self._v + cells[neighid].v) for neighid in self._neighbours_id])
 
     # Calculating the dot product
     def dodotprods(self):
