@@ -24,6 +24,10 @@ class Triangle_cell(Cell):
         # The id's get stored as int
         self._neighbours_id = np.array([], dtype='int32')
         self._neighbours_points = np.array([])
+        self._nuvectors = np.array([])
+        self._v_avgs = np.array([])
+        self._dot = []
+
     
     def find_midpoint(self, coords):
         super().find_midpoint(coords)
@@ -67,21 +71,7 @@ class Triangle_cell(Cell):
 
     # Calculating the dot product
     def dodotprods(self):
-        
-        self._posdot = np.array([])
-        self._negdot = np.array([])
-        
-        dotlist = [el[0] @ el[1] for el in zip(self._v_avgs, self._nuvectors)]
-        
-        self._dot = dotlist
-        
-        for i in dotlist:
-            if i > 0:
-                self._posdot = np.append(self._posdot, i)
-                self._negdot = np.append(self._negdot, 0)
-            else:
-                self._posdot = np.append(self._posdot, 0)
-                self._negdot = np.append(self._negdot, i)
+        self._dot = [el[0] @ el[1] for el in zip(self._v_avgs, self._nuvectors)]
         
 
     # @property makes it such that you can acses the attributes but

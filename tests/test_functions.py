@@ -28,7 +28,7 @@ def test_A_function(coords, result):
                                             (np.array([[45, 7.7], [23.45, 8.7], [34.5, 23]]), [2059/60, 197/15]),
                                             (np.array([[3.5, 4.5], [9.34, 56], [5.7, 5.8]]), [6.18, 22.1])])
 def test_midpoint_function(coords, result):
-    mid_point = midpoint(coords, result)
+    mid_point = midpoint(coords)
     for mid_coor, res_coor in zip(mid_point, result):
         assert mid_coor == pytest.approx(res_coor)
 
