@@ -129,14 +129,13 @@ class Simulation():
         self._framerate = (self._frames / self._intv) / (self._time * 10)
         # Get the list of image files in the directory
         images = [f"{self._resfoldname}img_{i}.png" for i in range(0, self._frames, self._intv)]
-
         # determine dimension from first image
         frame = cv2.imread(images[0])
         height, width, layers = frame.shape
 
         ## Define the codec and create a VideoWriter object
         fourcc = cv2.VideoWriter_fourcc(*'mp4v') # or 'XVID', 'DIVX', 'mp4v' etc.
-        video = cv2.VideoWriter(f"{self._resfoldname}video.AVI", fourcc, self._fr, (width, height)) # 5 frames per second
+        video = cv2.VideoWriter(f"{self._resfoldname}video.AVI", fourcc, self._framerate, (width, height))
 
         for image in images:
             video.write(cv2.imread(image))

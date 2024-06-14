@@ -28,19 +28,24 @@ def toml_input(pth):
             raise NameError('The toml file is missing enteries')
 
       x = re.sub("config_files/", "", pth)
-      file_name = re.sub(".toml", "", pth)
+      file_name = re.sub(".toml", "", x)
 
       sim = Simulation(mesh_file, file_name)
       sim.restorerun(restartFile)
       sim.runsim(frames, t_start, t_end)
+      print("Generated all oil for the given time interval")
+      sim.fishinggrounds()
       sim.photo(sim._frames-1)
+      print("Photo of the final step has been generated")
       sim.photos(photo_steps)
       sim.makevideo()
+      print("A video of the simulation has been generated")
       sim.txtprinter()
       sim.make_log()
          
-
-pth = 'config_files/example_config_file.toml'
+pth = input("Enter address of config file here, or leave blank for the example file: ")
+if len(pth) == 0:
+   pth = 'config_files/example_config_file.toml'
 
 toml_input(pth)
 
