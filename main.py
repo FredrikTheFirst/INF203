@@ -62,22 +62,25 @@ def toml_input(pth):
 
 def parse_input():
     parser = argparse.ArgumentParser(description='Use this program to simulate an oil spill')
-    parser.add_argument('-f', '--file', default='“input.toml', help='Prvide a toml file or a folder containing one or multiple toml files')
+    parser.add_argument('-p', '--pth', default='“input.toml', help='Prvide a toml file or a folder containing one or multiple toml files')
 
     args = parser.parse_args()
-    file = args.file
-    return file
+    pth = args.pth
+    return pth
 
+def checkfile(pth):
+   if os.path.exists(pth) == False:
+      print("Path you have entered doesn't exist")
+   if os.path.isfile(pth) == True:
+      toml_input(pth)
+   if os.path.isdir(pth) == True:
+      p = Path(pth).glob('**/*')
+      tomlfils = [fil for fil in p if type(fil) == toml]
+      for file in tomlfils:
+         toml_input(file)
 
-pth = input("Enter the path of your config file here, or the path of your folder of toml-files (leave blank for the example file): ")
+if __name__ == '__main__':
+   pth = parse_input()
+   checkfile(pth)
 
-if os.path.exists(pth) == False:
-   print("Path you have entered doesn't exist")
-if os.path.isfile(pth) == True:
-   toml_input(pth)
-if os.path.isdir(pth) == True:
-   p = Path(pth).glob('**/*')
-   tomlfils = [fil for fil in p if type(fil) == toml]
-   for file in tomlfils:
-      toml_input(file)
 
