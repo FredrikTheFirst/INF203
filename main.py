@@ -60,10 +60,16 @@ def toml_input(pth):
       print("A log of the simulation has been written")
       print("Simulation done!")
 
+def parse_input():
+    parser = argparse.ArgumentParser(description='Use this program to simulate an oil spill')
+    parser.add_argument('-f', '--file', default='“input.toml', help='Prvide a toml file or a folder containing one or multiple toml files')
+
+    args = parser.parse_args()
+    file = args.file
+    return file
+
 
 pth = input("Enter the path of your config file here, or the path of your folder of toml-files (leave blank for the example file): ")
-if len(pth) == 0:
-   pth = 'config_files/example_config_file.toml'
 
 if os.path.exists(pth) == False:
    print("Path you have entered doesn't exist")
@@ -75,42 +81,3 @@ if os.path.isdir(pth) == True:
    for file in tomlfils:
       toml_input(file)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''from solver_v2 import *
-path = 'config_files'
-import os 
-
-dir_list = os.listdir(path) 
-   
-for file in dir_list:
-    with open(f"{path}\{file}", 'r') as conf:
-      content = conf.readlines()
-      items = []
-      for line in content:
-         print(line)
-         if '=' in line:
-            items.append(line.strip("\n"))
-
-for ting in items:
-   eval(ting)'''
