@@ -117,17 +117,18 @@ class Simulation():
         plt.close()
 
     def photos(self, intv):
-        self._fr = intv
+        self._intv = intv
         for i in range(0, self._frames, intv):
             self.photo(i)
             print(f"Generated photo {i}")
 
-    
+
 
     def makevideo(self):
 
+        self._framerate = (self._frames / self._intv) / (self._time * 10)
         # Get the list of image files in the directory
-        images = [f"{self._resfoldname}img_{i}.png" for i in range(0,25)]
+        images = [f"{self._resfoldname}img_{i}.png" for i in range(0, self._frames, self._intv)]
 
         # determine dimension from first image
         frame = cv2.imread(images[0])
@@ -145,7 +146,8 @@ class Simulation():
     
     def make_log(self, logfile='logfile'):
         logger = log.getLogger('loggerName')
-        handler = log.FileHandler(str(logfile)+'.log', mode='w')
+        logplace = f"{self._resfoldname}{logfile}"
+        handler = log.FileHandler(str(logplace)+'.log', mode='w')
         formatter = log.Formatter('%(asctime)s - %(levelname)s:\n%(message)s')
 
         information = f'''
