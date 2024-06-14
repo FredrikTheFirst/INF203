@@ -22,9 +22,12 @@ def toml_input(pth):
       t_start = settings.get('tStart')
       t_end = settings.get('tEnd')
       photo_steps = io.get('writeFrequency')
+      boarders = geometry.get('boarders')
       restartFile = io.get('restartFile')
+      log_name = io.get('logName')
 
-      for parameter in (mesh_file, t_end):
+
+      for parameter in (mesh_file, t_end, boarders):
          if parameter == None:
             raise NameError('The toml file is missing enteries')
 

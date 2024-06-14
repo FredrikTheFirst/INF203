@@ -153,7 +153,7 @@ nSteps: {self._frames}
 tStart: {self._t_start}
 tEnd: {self._t_end}
 meshName: {self._filename}
-Fishinggrounds: {self._boarders}'''
+boarders: {self._boarders}'''
         
         if self._fr != None:
             information += f'''
@@ -166,7 +166,7 @@ Oil in fishingrounds at time:
         for i in range(self._frames+1):
             step = self._t_start + i * self._dt
             information += f'''
-t = {step:.3g}:     {self._oil_fishinggrounds[i]:.5g}'''
+t = {step:.5g}:     {self._oil_fishinggrounds[i]:.5g}'''
 
 
 
