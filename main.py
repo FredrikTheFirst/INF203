@@ -34,9 +34,15 @@ def toml_input(pth):
       
       if t_start == None:
          t_start = 0
+
+      if t_end < t_start:
+         raise ValueError('"t_end" should be larger then "t_start" in the toml file')
       
-      x = re.sub("(.)*(/|\\\\)", "", pth)
-      file_name = re.sub(".toml", "", x)
+      if not Path(mesh_file).is_file():
+         raise ImportError(f'Could not find the file "{mesh_file}"')
+
+
+      file_name = only_name(pth)
 
       outer_results_folder = 'results'
       if not Path(outer_results_folder).exists():
@@ -49,12 +55,14 @@ def toml_input(pth):
 
       sim = Simulation(mesh_file, resfold, boarders)
       if restartFile != None:
+         if not Path(restartFile).is_file():
+            raise ImportError(f'Could not find the file "{mesh_file}"')
          sim.restorerun(restartFile)
-      print(f"Starting oil simulation for file {x}")
+      print(f"Starting oil simulation for file {pth}")
       sim.runsim(frames, t_start, t_end)
       print("Generated all oil for the given time interval")
       sim.fishinggrounds()
-      sim.photo(sim._frames-1, 'final_oil_distrubution')
+      sim.photo(frames-1, 'final_oil_distrubution')
       print("A photo of the final step has been generated")
 
       if photo_steps != None:
@@ -66,14 +74,16 @@ def toml_input(pth):
          print("No video was generated, because no writeFrequency parameter was given in the toml-file")
 
       saveFile = input("What would you like to name the solution-file of your code? (leave blank for no solution-file): ")
+      saveFile = only_name(saveFile)
       if len(saveFile) != 0:
-         sim.txtprinter(saveFile)
+         sim.txtprinter(saveFile+'txt')
          print("A solution file was added to the input-folder")
       else:
          print("No solution file was added to the input folder")
       
       if log_name == None:
          log_name = 'logfile'
+      log_name = only_name(log_name)+'.log'
       sim.make_log(log_name)
 
       print("A log of the simulation has been written")
@@ -86,6 +96,11 @@ def parse_input():
     args = parser.parse_args()
     pth = args.pth
     return pth
+
+def only_name(string):
+   string = re.sub("(.)*(/|\\\\)", "", string)
+   string = re.sub("(\\..*)*", "", string)
+   return string
 
 def checkfile(pth):
    if not Path(pth).exists():
@@ -100,7 +115,6 @@ def checkfile(pth):
       tomlfils = [fil for fil in p if re.search('.toml$', fil) != None]
       if len(tomlfils) == 0:
          raise TypeError('The given folder contains no toml files')
-      print(tomlfils)
       for file in tomlfils:
          toml_input(file)
 

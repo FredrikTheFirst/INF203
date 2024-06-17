@@ -1,13 +1,13 @@
 [settings]
 nSteps = 501
-tStart = 'a'
-tEnd = 0.6
+tStart = 0.6
+tEnd = 0.1
 
 [geometry]
 meshName = "bay.msh"
 boarders = [ [0.0, 0.45], [0.0, 0.2] ]
 
 [IO]
-logName = "log"
-# writeFrequency = 50
-# restartFile = "input/solution.txt"
+logName = "sol"
+writeFrequency = 50
+restartFile = "sol"

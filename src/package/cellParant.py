@@ -1,5 +1,9 @@
 from src.package.functions import *
 
+'''
+This module provides the parent
+'''
+
 class Cell:
     def __init__(self, cell_id, points):
         # Storing a bunch of values

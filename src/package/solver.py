@@ -140,10 +140,10 @@ class Simulation():
         cv2.destroyAllWindows()
         video.release()
     
-    def make_log(self, logfile='logfile'):
-        logger = log.getLogger('loggerName')
+    def make_log(self, logfile='logfile.log'):
+        logger = log.getLogger(__name__)
         logplace = f"{self._resfoldname}/{logfile}"
-        handler = log.FileHandler(str(logplace)+'.log', mode='w')
+        handler = log.FileHandler(str(logplace), mode='w')
         formatter = log.Formatter('%(asctime)s - %(levelname)s:\n%(message)s')
 
         information = f'''
@@ -168,10 +168,7 @@ Oil in fishingrounds at time:
         for i in range(self._frames+1):
             step = self._t_start + i * self._dt
             information += f'''
-t = {step:.5g}:     {self._oil_fishinggrounds[i]:.5g}'''
-
-
-
+t = {step:#.5g}:     {self._oil_fishinggrounds[i]:#.5g}'''
 
         handler.setFormatter(formatter)
         logger.addHandler(handler)
@@ -187,4 +184,7 @@ t = {step:.5g}:     {self._oil_fishinggrounds[i]:.5g}'''
         self._restartFile = restartFile
         with open(restartFile, 'r') as file:
             startoil = file.readlines()
-            self._Oillist = np.array([startoil])
+            try:
+                self._Oillist = np.array([[float(line) for line in startoil]])
+            except:
+                raise TypeError('There is something wrong with the restartFile')

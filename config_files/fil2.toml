@@ -8,6 +8,6 @@ meshName = "bay.msh"
 boarders = [ [0.0, 0.45], [0.0, 0.2] ]
 
 [IO]
-logName = "log"
-writeFrequency = 50
+logName = "McLog"
+# writeFrequency = 50
 # restartFile = "input/solution.txt"
