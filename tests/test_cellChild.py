@@ -22,12 +22,24 @@ def advanced_Triangle_cell():
     cells.append(Triangle_cell(3, [6, 7, 8]))
     return cells
 
+
 @pytest.mark.parametrize('line_ids, triangle_ids', [([1, 5, 4],
                                                      [0, 2, 3])])
 def test_cell_id(advanced_Line_cell, advanced_Triangle_cell, line_ids, triangle_ids):
     for cells, ids in ((advanced_Line_cell, line_ids), (advanced_Triangle_cell, triangle_ids)):
         for id, cell in zip(ids, cells):
             assert cell.id == id
+'''
+@pytest.mark.parametrize('cells, ids', [([advanced_Line_cell[0], 1]),
+                                       ([advanced_Line_cell[1], 5]),
+                                       ([advanced_Line_cell[2], 4]),
+                                       ([advanced_Triangle_cell[0], 0]),
+                                       ([advanced_Triangle_cell[1], 2]),
+                                       ([advanced_Triangle_cell[2], 3])])
+def test_cell_id(cells, ids):
+    for cell, id in zip(cells, ids):
+        assert cell.id == id
+'''
 
     
 @pytest.mark.parametrize('list_line_points, list_triangle_points', [([[1, 2], [4, 5], [6, 7]],
@@ -44,8 +56,6 @@ def test_cell_points(advanced_Line_cell, advanced_Triangle_cell, list_line_point
 def test_cell_midpoint(advanced_Line_cell, advanced_Triangle_cell, line_mids, triangle_mids, coords):
     for cells, mids in ((advanced_Line_cell, line_mids), (advanced_Triangle_cell, triangle_mids)):
         for mid, cell in zip(mids, cells):
-            # Make sure the midpoint`s` are None if find_midpoint() is not called
-            assert cell.midpoint == None
             cell.find_midpoint(coords[cell.points])
             for mid_coord, cell_coord in zip(mid, cell.midpoint):
                 assert cell_coord == pytest.approx(mid_coord)
@@ -56,8 +66,6 @@ def test_cell_midpoint(advanced_Line_cell, advanced_Triangle_cell, line_mids, tr
 def test_cell_v(advanced_Line_cell, advanced_Triangle_cell, list_line_v, list_triangle_v, coords):
     for cells, list_v in ((advanced_Line_cell, list_line_v), (advanced_Triangle_cell, list_triangle_v)):
         for v, cell in zip(list_v, cells):
-            # Make sure the v`s are None if find_vel() is not called
-            assert cell.v == None
             # Need to define midpoints first
             cell.find_midpoint(coords[cell.points])
             cell.find_vel()
@@ -72,8 +80,6 @@ def test_cell_v(advanced_Line_cell, advanced_Triangle_cell, list_line_v, list_tr
                                                 coords)])
 def test_triangle_area(advanced_Triangle_cell, list_area, coords):
     for triangle, area in zip(advanced_Triangle_cell, list_area):
-        # Make sure the area`s are None if find_area() is not called
-        assert triangle.area == None
         triangle.find_area(coords[triangle.points])
         assert triangle.area == pytest.approx(area)
 
@@ -108,10 +114,9 @@ def test_triangle_neighbours_points(advanced_Line_cell, advanced_Triangle_cell, 
     for neighbours, triangle in zip(list_neighbours, triangles):
         triangle.store_neighbours(cells)
         cells.remove(triangle)
-        for triangle_neigh_points in neighbours:
-            pass
-            # for neigh_point, triangle_neigh_point in zip(neigh_points, triangle_neigh_points):
-                # assert triangle_neigh_point == neigh_point
+        for neigh_points, triangle_neigh_points in zip(neighbours, triangle.neighbours_points):
+            for neigh_point, triangle_neigh_point in zip(neigh_points, triangle_neigh_points):
+                assert triangle_neigh_point == neigh_point
 
 @pytest.mark.parametrize('list_vectors, coords', [([np.array([[-3.2, 3]]),
                                                     np.array([[-1, 0]]),

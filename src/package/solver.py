@@ -4,8 +4,6 @@ import cv2
 import logging as log
 from src.package.functions import *
 from src.package.mesh import *
-import cv2
-from pathlib import Path
 
 class Simulation():
     def __init__(self, filename, resfold, boarders, midpoint = np.array([0.35, 0.45])):

@@ -1,8 +1,8 @@
 import toml
 import argparse
-from src.package.solver import *
 import re
 from pathlib import Path
+from src.package.solver import *
 
 
 def toml_input(pth):

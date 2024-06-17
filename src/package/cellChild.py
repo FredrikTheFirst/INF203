@@ -1,10 +1,14 @@
 import numpy as np
-from src.package.cellParant import *
+from src.package.cellParent import *
+'''
+This module provides the cell objects used in meshes
+'''
 
-# Just a comment
+
 class Line_cell(Cell):
-    # The super() makes it so that this class inherites the method
-    # from the parent class
+    '''
+    A class for cells that happens to be lines
+    '''
     def __init__(self, cell_id, points):
         super().__init__(cell_id, points)
     
@@ -35,8 +39,13 @@ class Triangle_cell(Cell):
     def find_vel(self):
         super().find_vel()
     
-    # Find and store the neighbours of each triangle
     def store_neighbours(self, cells):
+        '''
+        Finds and stores the id`s and shared points of neighbours as attributes
+
+        Parameteres:
+        cells (list): A list of the cells that might neighbour the triangle
+        '''
         my_points = set(self._points)
 
         # If a triangle already has 3 neigbhours we dont look for others
@@ -57,20 +66,41 @@ class Triangle_cell(Cell):
                     if len(self._neighbours_id) == 3:
                         break
 
-    # Computing the area of each triangle
     def find_area(self, coords):
+        '''
+        Computing the area of the Triangle and storing it as an attribute
+
+        Parameters:
+        coords (ndarray): A matrix containing the 2D position vector of the corners of the triangle
+        '''
         self._area = A(coords)
     
-    # Calculate the nu-vectors between every neighbour of every triangle
     def find_nuvecs(self, coords):
+        '''
+        Calculating the outward pointing vectors for the sides of the triangle with the
+        absolute vale equal to the length of the side. Then storing the vectors in an array.
+        These vectors are called the nuvectors
+
+        Parameters:
+        coords (ndarray): A matrix containing the 2D position vector of the corners of the triangle
+        '''
         self._nuvectors = np.array([nuvector(np.array([coords[i] for i in pointset]), self._midpoint) for pointset in self._neighbours_points])
     
-    # Calculating the average of the velocities between the triangle and its neighbours
     def find_avg_v(self, cells):
+        '''
+        Calculating the average between the cell`s velocity and each of it`s neighbour`s velocities.
+        Then storing the averages in an array
+
+        Parameters:
+        cells (list): A list containing all the cells
+        '''
         self._v_avgs = np.array([0.5 * (self._v + cells[neighid].v) for neighid in self._neighbours_id])
 
-    # Calculating the dot product
     def dodotprods(self):
+        '''
+        Calculating the dotproducts between each side`s nuvector and the average of the velocites between the triangle
+        and the neighbour which it shares the side with.
+        '''
         self._dot = [el[0] @ el[1] for el in zip(self._v_avgs, self._nuvectors)]
         
 

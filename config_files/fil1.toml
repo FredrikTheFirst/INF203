@@ -1,6 +1,6 @@
 [settings]
 nSteps = 501
-tStart = 'a'
+tStart = 0.1
 tEnd = 0.6
 
 [geometry]
@@ -9,5 +9,5 @@ boarders = [ [0.0, 0.45], [0.0, 0.2] ]
 
 [IO]
 logName = "log"
-# writeFrequency = 50
+writeFrequency = 50
 # restartFile = "input/solution.txt"

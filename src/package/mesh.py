@@ -1,13 +1,24 @@
 import meshio
 import numpy as np
 from src.package.cellChild import *
-
+'''
+This module reads in a mesh and provides a selfdefined object of type Mesh
+'''
 
 class Cell_factory:
+    '''
+    A factory to help define cell objects
+    '''
     def __init__(self):
+        '''
+        Stores an empty dictionary as an attribute
+        '''
         self._cell_types = {}
     
     def register(self, key, name):
+        '''
+        
+        '''
         self._cell_types[key] = name
 
     def __call__(self, cell, cell_id, celltype):
@@ -67,9 +78,9 @@ class Mesh():
     # Register the neighbours of all cells
     def find_neighbours(self):
         cells = self._cells.copy()
-        for id, tri in enumerate(self.get_triangles()):
-            tri.store_neighbours(cells)
+        for tri in self.get_triangles():
             cells.remove(tri)
+            tri.store_neighbours(cells)
     
     # Finding the scaled normalvector of the sides of triangels
     def find_nuvectors(self):

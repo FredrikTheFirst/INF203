@@ -1,72 +1,101 @@
 import numpy as np
-
-
-#finner hastighet i et punkt (midtpunkt)
+'''
+This module provides a bunch of functions
+'''
 
 def v(x):
+    '''
+    Find the velocity at a given point
+
+    Parameters:
+    x (ndarray): A 2D position vector
+
+    Returns:
+    ndarray: The velocity at position x
+    '''
     return np.array([x[1] - 0.2*x[0], -x[0]])
-"""
-def v(x):
-    return np.array([[-0.2, 1], [-1, 0]]) @ x
-"""
 
 
-
-
-#g-funksjonen
-def g(a, b, v, u):
-    dot = np.array(v) @ np.array(u)
-    if dot > 0:
-        return a * dot
-    else:
-        return b * dot
-
-#g-funksjonen, men med indre produkt allerede utregna
 def g_arr(a, b, dot):
+    '''
+    The g-function from the task description
+
+    Parameters:
+    a (float): The first number, positive
+    b (float): The second number, positive
+    dot (float): The deciding number
+
+    Returns:
+    float: The product of a and dot (if dot is positive), or b and dot (if dot is negative)
+    '''
     if dot > 0:
         return a * dot
     else:
         return b * dot
 
 
-#finner areal
 def A(coords):
+    '''
+    Calculate the area of a triangle
+
+    Parameteres:
+    coords (ndarray): A matrix containing the 2D position vector of the corners of a triangle
+
+    Returns:
+    float: The area of the triangle
+    '''
     a, b, c = np.array(coords[0]), np.array(coords[1]), np.array(coords[2])
     v1 = b - a
     v2 = c - a
     return 0.5 * abs(np.cross(v1, v2))
 
 
-#finner midtpunkt
 def midpoint(coords):
+    '''
+    Calculates the midpoint of a geometric figure
+
+    Parameters:
+    coords (ndarray): A matrix containing the 2D position vector of the corners of the figure
+
+    Returns:
+    float: The midpoint of the geometric figure
+    '''
     return sum(coords) / len(coords)
 
-
-#90 graders rotasjonsmatrise
+# The 90 degree clockwise rotation matrix
 M = np.array([[0, -1], [1, 0]])
 
-
-#n-vector funksjon, tar to koordinater og et triangelmidtpunkt, lager en ortogonal vektor på linja med samme lengde som linja
 def nuvector(v, mid):
+    '''
+    Calculating the outward pointing vector for a side of a polynomial with the absolute vale equal to the length of the side 
+
+    Parameters:
+    v (ndarray): A matrix containing the 2D position vector for the coorners of the side
+    mid (ndarray): The 2D position vector for the midpoint of the polynomial
+    M (ndarray): The 90 degree clockwise rotation matrix 
+
+    Returns:
+    ndarray: The outward pointing vector for the side
+    '''
     v1, v2 = v[0], v[1]
     e = v2 - v1
     nn = M @ e
-    pl = v1 - mid + v2 - mid
+    pl = v1 - mid
     if nn @ pl > 0:
         return nn
     else:
         return -nn
 
-#tar koordinater til hjørnene på en trekant og gir tilbake en liste med normalvektorer på hver av kantene (ubrukelig?)
-def morevectors(triangle_coords, func):
-    c = np.array([e - triangle_coords[i-1] for i, e in enumerate(triangle_coords)])
-    nlist = [func(np.array([np.array([0, 0]), c[i]]), midpoint(c)) for i in range(len(triangle_coords))]
-    return np.array(nlist)
 
-#danner startolja til hver celle
 def starting_amount(x_mid, x):
-    return np.exp(-np.linalg.norm(x - x_mid)**2 / 0.01)
+    '''
+    Calculating the starting amount of oil at a point
 
-#regner ut endringen av olje i en celle
-def dOil(dt, A, g):
-    return -dt/A * g
+    Parameters:
+    x_mid (ndarray): The 2D position vector for the center of the oil spill
+    x (ndarray): The 2D position vector for a point
+
+    Returns
+    float: Amount of oil at position x
+    '''
+    return np.exp(-np.linalg.norm(x - x_mid)**2 / 0.01)
