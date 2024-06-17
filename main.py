@@ -27,7 +27,7 @@ def toml_input(pth):
       log_name = io.get('logName')
 
 
-      for parameter in (mesh_file, t_end, boarders):
+      for parameter in (mesh_file, frames, t_end, boarders):
          if parameter == None:
             raise NameError('The toml file is missing enteries')
 
