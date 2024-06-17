@@ -75,7 +75,7 @@ def checkfile(pth):
       toml_input(pth)
    if os.path.isdir(pth) == True:
       p = Path(pth).glob('**/*')
-      tomlfils = [fil for fil in p if type(fil) == toml]
+      tomlfils = [fil for fil in p if re.search('.toml$', fil) != None]
       for file in tomlfils:
          toml_input(file)
 
