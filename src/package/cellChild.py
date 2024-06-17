@@ -35,11 +35,11 @@ class Triangle_cell(Cell):
     def find_vel(self):
         super().find_vel()
     
-    # Find and store the neighbours of each triangel
+    # Find and store the neighbours of each triangle
     def store_neighbours(self, cells):
         my_points = set(self._points)
 
-        # If a triangel already has 3 neigbhours we dont look for others
+        # If a triangle already has 3 neigbhours we dont look for others
         if len(self._neighbours_id) != 3:
             for cell in cells:
                 matches = my_points & set(cell.points)
@@ -48,16 +48,16 @@ class Triangle_cell(Cell):
                     self._neighbours_id = np.append(self._neighbours_id, cell.id)
                     self._neighbours_points = np.append(np.array(self._neighbours_points), matches)
                     
-                    # If the neigbours is a triangel we store the cell`s id in the neigbhours list 
+                    # If the neigbours is a triangle we store the cell`s id in the neigbhours list 
                     if type(cell).__name__ == 'Triangle_cell':
                         cell._neighbours_id = np.append(cell._neighbours_id, self._id)
                         cell._neighbours_points = np.append(np.array(cell._neighbours_points), matches)
                         
-                    # If a triangel already has 3 neigbhours we break from the loop
+                    # If a triangle already has 3 neigbhours we break from the loop
                     if len(self._neighbours_id) == 3:
                         break
 
-    # Computing the area of each triangel
+    # Computing the area of each triangle
     def find_area(self, coords):
         self._area = A(coords)
     
@@ -65,7 +65,7 @@ class Triangle_cell(Cell):
     def find_nuvecs(self, coords):
         self._nuvectors = np.array([nuvector(np.array([coords[i] for i in pointset]), self._midpoint) for pointset in self._neighbours_points])
     
-    # Calculating the average of the velocities between the triangel and its neighbours
+    # Calculating the average of the velocities between the triangle and its neighbours
     def find_avg_v(self, cells):
         self._v_avgs = np.array([0.5 * (self._v + cells[neighid].v) for neighid in self._neighbours_id])
 

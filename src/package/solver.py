@@ -5,18 +5,18 @@ import logging as log
 from src.package.functions import *
 from src.package.mesh import *
 import cv2
-import os
+from pathlib import Path
 
 class Simulation():
-    def __init__(self, filename, resfold, midpoint = np.array([0.35, 0.45]), boarders=[[0.0, 0.45], [0.0, 0.2]]):
+    def __init__(self, filename, resfold, boarders, midpoint = np.array([0.35, 0.45])):
         self._filename = filename
         self._x_mid = midpoint
         self._boarders = boarders
         self._msh = Mesh(filename)
         self._oil_fishinggrounds = np.array([])
-        self._fr = None
-        self._resfoldname = f"results/{resfold}/"
-        os.makedirs(os.path.dirname(self._resfoldname), exist_ok=True)
+        self._intv = None
+        self._restartFile = None
+        self._resfoldname = resfold
 
         self._msh.cell_midpoint()
         self._msh.triangel_area()
@@ -67,7 +67,7 @@ class Simulation():
         """
 
     def fishinggrounds(self):
-        self._included_ids = np.array([], dtype='int32')
+        included_ids = np.array([], dtype='int32')
 
         for cell in self._msh.cells:
             include = False
@@ -75,12 +75,12 @@ class Simulation():
                 if coor > limit[0] and coor < limit[1]:
                     include = True
             if include:
-                self._included_ids = np.append(self._included_ids, cell.id)
-        self._oil_fishinggrounds = np.array([sum(oil[self._included_ids]) for oil in self._Oillist])
+                included_ids = np.append(included_ids, cell.id)
+        self._oil_fishinggrounds = np.array([sum(oil[included_ids]) for oil in self._Oillist])
 
 
 
-    def photo(self, i):
+    def photo(self, i, img_name):
         el = self._Oillist[i]
         
         plt.figure()
@@ -112,29 +112,27 @@ class Simulation():
         plt.gca().set_aspect('equal')
 
         # Show plot
-        plt.savefig(f"{self._resfoldname}img_{i}.png")
+        plt.savefig(f"{self._resfoldname}/{img_name}")
         plt.close()
 
     def photos(self, intv):
         self._intv = intv
         for i in range(0, self._frames, intv):
-            self.photo(i)
-            print(f"Generated photo {i}")
-
+            self.photo(i, f'frames_in_video/img_{i}.png')
+            print(f"Generated photo for step {i}")
 
 
     def makevideo(self):
-
         self._framerate = (self._frames / self._intv) / (self._time * 10)
         # Get the list of image files in the directory
-        images = [f"{self._resfoldname}img_{i}.png" for i in range(0, self._frames, self._intv)]
+        images = [f"{self._resfoldname}/frames_in_video/img_{i}.png" for i in range(0, self._frames, self._intv)]
         # determine dimension from first image
         frame = cv2.imread(images[0])
         height, width, layers = frame.shape
 
         ## Define the codec and create a VideoWriter object
         fourcc = cv2.VideoWriter_fourcc(*'mp4v') # or 'XVID', 'DIVX', 'mp4v' etc.
-        video = cv2.VideoWriter(f"{self._resfoldname}video.AVI", fourcc, self._framerate, (width, height))
+        video = cv2.VideoWriter(f"{self._resfoldname}/video.AVI", fourcc, self._framerate, (width, height))
 
         for image in images:
             video.write(cv2.imread(image))
@@ -144,7 +142,7 @@ class Simulation():
     
     def make_log(self, logfile='logfile'):
         logger = log.getLogger('loggerName')
-        logplace = f"{self._resfoldname}{logfile}"
+        logplace = f"{self._resfoldname}/{logfile}"
         handler = log.FileHandler(str(logplace)+'.log', mode='w')
         formatter = log.Formatter('%(asctime)s - %(levelname)s:\n%(message)s')
 
@@ -155,9 +153,13 @@ tEnd: {self._t_end}
 meshName: {self._filename}
 boarders: {self._boarders}'''
         
-        if self._fr != None:
+        if self._intv != None:
             information += f'''
-writeFrequency = {self._fr}'''
+writeFrequency = {self._intv}'''
+        
+        if self._restartFile != None:
+            information += f'''
+restartFile = {self._restartFile}'''
 
         information += '''
 
@@ -176,16 +178,13 @@ t = {step:.5g}:     {self._oil_fishinggrounds[i]:.5g}'''
         logger.setLevel(log.INFO)
         logger.info(information)
 
-    def txtprinter(self):
-        filename = "input/solution.txt"
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
-        with open(filename, 'w') as writer:
+    def txtprinter(self, filename):
+        with open(self._resfoldname+'/'+filename, 'w') as writer:
             for i in self._Oillist[-1]:
                 writer.write(f"{i}\n")
     
-    def restorerun(self, restorefile):
-        if restorefile != None:
-            with open(restorefile, 'r') as data:
-                self._Oillist = np.array([[eval(i.strip('/n')) for i in data.readlines()]])
-        else:
-            pass
+    def restorerun(self, restartFile):
+        self._restartFile = restartFile
+        with open(restartFile, 'r') as file:
+            startoil = file.readlines()
+            self._Oillist = np.array([startoil])
