@@ -6,6 +6,12 @@ from src.package.solver import *
 
 
 def toml_input(pth):
+   '''
+   Runs a simulation with specifications from a toml file
+
+   Parameters:
+   pth (string): The path to a toml file
+   '''
    with open(pth, 'r') as file:
       config = toml.load(file)
 
@@ -44,16 +50,19 @@ def toml_input(pth):
 
       file_name = only_name(pth)
 
+      # Create a folder called results if it dosn`t already exists
       outer_results_folder = 'results'
       if not Path(outer_results_folder).exists():
          Path(outer_results_folder).mkdir()
-      
+      # Creating a folder to store the results of the simulation
       resfold = outer_results_folder+'/'+file_name
       if Path(resfold).exists():
          recursive_folder_deletion(Path(resfold))
       Path(resfold).mkdir()
 
+      # Begin simulation
       sim = Simulation(mesh_file, resfold, boarders)
+      # If we have been given a restarFile wethrow an error if we can`t find it
       if restartFile != None:
          if not Path(restartFile).is_file():
             raise ImportError(f'Could not find the file "{mesh_file}"')
@@ -65,6 +74,7 @@ def toml_input(pth):
       sim.photo(frames-1, 'final_oil_distrubution')
       print("A photo of the final step has been generated")
 
+      # If we 
       if photo_steps != None:
          Path(resfold+'/frames_in_video').mkdir()
          sim.photos(photo_steps)
@@ -76,7 +86,7 @@ def toml_input(pth):
       saveFile = input("What would you like to name the solution-file of your code? (leave blank for no solution-file): ")
       saveFile = only_name(saveFile)
       if len(saveFile) != 0:
-         sim.txtprinter(saveFile+'txt')
+         sim.txtprinter(saveFile+'.txt')
          print("A solution file was added to the input-folder")
       else:
          print("No solution file was added to the input folder")
@@ -90,6 +100,12 @@ def toml_input(pth):
       print("Simulation done!")
 
 def parse_input():
+    '''
+    Reading the input from the command line
+
+    Returns:
+    string: A path which was defined by the command line input
+    '''
     parser = argparse.ArgumentParser(description='Use this program to simulate an oil spill')
     parser.add_argument('-p', '--pth', default='“input.toml', help='Prvide a toml file or a folder containing one or multiple toml files')
 
@@ -98,27 +114,55 @@ def parse_input():
     return pth
 
 def only_name(string):
+   '''
+   A function that removes unwanted parts from a string
+
+   Parameters:
+   string (string): A string which we want changed
+
+   Returns:
+   String: A string without '/', '\\' and '.'
+   '''
    string = re.sub("(.)*(/|\\\\)", "", string)
    string = re.sub("(\\..*)*", "", string)
    return string
 
 def checkfile(pth):
+   '''
+   Verify a path to see if it can be sent on
+
+   Parameteres:
+   pth (string): A posible path which leads to a toml file
+
+   Returns:
+   string: A path to a toml file
+   '''
+   # Throw error if the path dosn`t exists
    if not Path(pth).exists():
       raise NameError("Path you have entered doesn't exist")
+   # Check if path is an toml file
    if Path(pth).is_file():
       if re.search('.toml$', pth) == None:
          raise TypeError('Was not given a toml file')
       toml_input(pth)
-   if Path(pth).is_dir() == True:
+   # Check if path contains one or more tonm file(s) one leve down
+   if Path(pth).is_dir():
       p = Path(pth).iterdir()
       p = [str(x) for x in p if x.is_file()]
       tomlfils = [fil for fil in p if re.search('.toml$', fil) != None]
+      # Throw error if folder dosn`t contain toml file
       if len(tomlfils) == 0:
          raise TypeError('The given folder contains no toml files')
       for file in tomlfils:
          toml_input(file)
 
 def recursive_folder_deletion(pth):
+   '''
+   Deletes a folder and all it contents
+
+   Parameters:
+   pth (string): The path to a folder
+   '''
    if pth.is_file():
       pth.unlink()
    else:
@@ -128,6 +172,9 @@ def recursive_folder_deletion(pth):
 
 
 if __name__ == '__main__':
+   '''
+   What happens if file is run
+   '''
    pth = parse_input()
    checkfile(pth)
 
