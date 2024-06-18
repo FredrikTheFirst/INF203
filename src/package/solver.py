@@ -4,18 +4,41 @@ import cv2
 import logging as log
 from src.package.functions import *
 from src.package.mesh import *
+'''
+This module is used to run a simulation of the 
+'''
 
 class Simulation():
+    '''
+    This object runs an oil simulation as well as storing paramteres of the simulation
+    '''
     def __init__(self, filename, resfold, boarders, midpoint = np.array([0.35, 0.45])):
+        '''
+        This method is storeing the parameters as attributes as well as defining other attributes
+
+        Paramterers
+        filename (string): The name of the .msh file that containes the geometry of the simulation
+        resfold (string): The name and relative path of the folder which the results of the simulation is going to be stored in
+        boarders (list): A list containing the the boarders of the fishing grounds
+        midpoint (ndarray): An array which descripes the episenter of the oil spill
+        '''
         self._filename = filename
         self._x_mid = midpoint
         self._boarders = boarders
         self._msh = Mesh(filename)
+        self._resfoldname = resfold
+
+        # Establishing attributes which are empty/None to be used later
         self._oil_fishinggrounds = np.array([])
         self._intv = None
         self._restartFile = None
-        self._resfoldname = resfold
+        self._frames == None
+        self._t_start = None
+        self._t_end = None
+        self._time = None
+        self._dt = None
 
+        # Calling the methodes of the self._msh object
         self._msh.cell_midpoint()
         self._msh.triangel_area()
         self._msh.find_neighbours()
@@ -24,29 +47,37 @@ class Simulation():
         self._msh.find_vel_vec_avg()
         self._msh.calc_dot_prod()
 
+        # Calculating the starting amount of oil in each cell
         self._Oillist = np.array([[starting_amount(self._x_mid, cell.midpoint) for cell in self._msh.cells]])
 
     def genoil(self):
+        '''
+        Generating the amount of oil in each cell for a iteration of the simulation
+        '''
+
+        # Copy an array of the oil from the last iteration
         ucopy = self._Oillist[-1].copy()
         for tri in self._msh.get_triangles():
+            # Amount of oil in the triangle from the previous iteration
             u_old = ucopy[tri.id]
+            # Amount of oil in the neighbouring cells from the previous iteration
             u_old_ngh = ucopy[tri.neighbours_id]
-
-            # u_old_array = np.array([u_old for i in range(3)])
-
-            # dot_list = [g_arr(u_old, u_ngh, pd, nd) for u_ngh, pd, nd in (u_old_ngh, tri._posdot, tri._negdot)]
-
-            # F = -self._dt / tri.area * sum(g_arr(u_old_array, u_old_ngh, tri._posdot, tri._negdot))
-
-            # F = -self._dt / tri.area * sum(u_old * tri._posdot + u_old_ngh * tri._negdot)
-
+            # The total change of oil in the triangle
             F = -self._dt / tri.area * sum([g_arr(u_old, u_ngh, dot) for u_ngh, dot in zip(u_old_ngh, tri.dot)])
             ucopy[tri.id] += F
+        # Storing the amount of oil in each cell from this iteration
         self._Oillist = np.vstack([self._Oillist, ucopy])
 
-        # return np.array(ucopy)
-
     def runsim(self, frames = 500, t_start=0, t_end=0.5):
+        '''
+        Establishing some attributes based on the given parameters as well as calling the method
+        which generates the next iteration
+
+        Parameters:
+        frames (int): The amount of steps in which are going to be simulated
+        t_start (float): The start time of the simulation
+        t_end (float): The end time of the simulation
+        '''
         self._frames = frames
         self._t_start = t_start
         self._t_end = t_end
@@ -56,17 +87,13 @@ class Simulation():
         for i in range(self._frames):
             self.genoil()
 
-        """
-        ulist = [self.u]
-        for i in range(self.frames):
-            ulist.append(self.genoil(ulist[-1]))
-            print(f"Printed u number {i}.")
-        self.Oillist = tuple(ulist)
-        """
-
     def fishinggrounds(self):
-        included_ids = np.array([], dtype='int32')
+        '''
+        Calculating the amount of oil in the fishing grounds for each iteration of the simulation
+        '''
 
+        # Storing the ids of 
+        included_ids = np.array([], dtype='int32')
         for cell in self._msh.cells:
             include = False
             for coor, limit in zip(cell.midpoint, self._boarders):

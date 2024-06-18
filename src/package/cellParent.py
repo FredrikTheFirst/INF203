@@ -39,6 +39,9 @@ class Cell:
     # not change them 
     @property
     def id(self):
+        '''
+        Getter to prvid the variable id
+        '''
         return self._id
     
     @property

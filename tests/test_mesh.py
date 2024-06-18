@@ -1,6 +1,8 @@
 import pytest
 from src.package.mesh import *
 
+#%% Testing the Mesh class and its attributes
+
 @pytest.fixture
 def advanced_mesh():
     mesh = []
@@ -8,6 +10,20 @@ def advanced_mesh():
     mesh.append(Mesh('simple_mesh.msh'))
     mesh.append(Mesh('simple_mesh_2.msh'))
     return mesh
+
+@pytest.mark.parametrize('mesh, lengths_cells', [('simple.msh', 488), ('simple_mesh.msh', 8), ('simple_mesh_2.msh', 2)])
+class Test_mesh:
+    def __init__(self, mesh, lengths_cells):
+        self._mesh = Mesh(mesh)
+        self._lengths_cells = lengths_cells
+
+    def test_mesh_cells_length(self, lengths_cells):
+            assert len(self._mesh.cells) == lengths_cells
+        
+    
+
+    
+
 
 
 @pytest.mark.parametrize('lengths', [([488, 8, 22])])

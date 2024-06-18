@@ -7,9 +7,13 @@ This module provides the cell objects used in meshes
 
 class Line_cell(Cell):
     '''
+    A child class which inherites properties of the parent class Cell
     A class for cells that happens to be lines
     '''
     def __init__(self, cell_id, points):
+        '''
+        Calling the parent method
+        '''
         super().__init__(cell_id, points)
     
     def find_midpoint(self, coords):
