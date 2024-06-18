@@ -88,7 +88,7 @@ class Triangle_cell(Cell):
     
     def find_avg_v(self, cells):
         '''
-        Calculating the average between the cell`s velocity and each of it`s neighbour`s velocities.
+        Calculating the average between the triangle`s velocity and each of it`s neighbour`s velocities.
         Then storing the averages in an array
 
         Parameters:

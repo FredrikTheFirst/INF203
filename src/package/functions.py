@@ -62,10 +62,8 @@ def midpoint(coords):
     '''
     return sum(coords) / len(coords)
 
-# The 90 degree clockwise rotation matrix
-M = np.array([[0, -1], [1, 0]])
 
-def nuvector(v, mid):
+def nuvector(v, mid, M=np.array([[0, -1], [1, 0]])):
     '''
     Calculating the outward pointing vector for a side of a polynomial with the absolute vale equal to the length of the side 
 
