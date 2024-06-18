@@ -95,10 +95,10 @@ class Simulation():
         # Storing the ids of the cells in the fishinggrounds
         included_ids = np.array([], dtype='int32')
         for cell in self._msh.cells:
-            include = False
+            include = True
             for coor, limit in zip(cell.midpoint, self._boarders):
-                if coor > limit[0] and coor < limit[1]:
-                    include = True
+                if coor < limit[0] or coor > limit[1]:
+                    include = False
             if include:
                 included_ids = np.append(included_ids, cell.id)
         # Storing the amount of oil in the fishing grounds for each iteration of the simulation
@@ -244,6 +244,6 @@ t = {step:#.5g}:     {self._oil_fishinggrounds[i]:#.5g}'''
             startoil = file.readlines()
             try:
                 self._Oillist = np.array([[float(line) for line in startoil]])
-                assert len(self._msh.cells) == len(self._Oillist[1])
+                assert len(self._msh.cells) == len(self._Oillist[0])
             except:
                 raise TypeError('There is something wrong with the restartFile')
