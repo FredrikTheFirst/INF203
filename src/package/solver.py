@@ -32,7 +32,7 @@ class Simulation():
         self._oil_fishinggrounds = np.array([])
         self._intv = None
         self._restartFile = None
-        self._frames == None
+        self._frames = None
         self._t_start = None
         self._t_end = None
         self._time = None
@@ -92,7 +92,7 @@ class Simulation():
         Calculating the amount of oil in the fishing grounds for each iteration of the simulation
         '''
 
-        # Storing the ids of 
+        # Storing the ids of the cells in the fishinggrounds
         included_ids = np.array([], dtype='int32')
         for cell in self._msh.cells:
             include = False
@@ -101,53 +101,68 @@ class Simulation():
                     include = True
             if include:
                 included_ids = np.append(included_ids, cell.id)
+        # Storing the amount of oil in the fishing grounds for each iteration of the simulation
         self._oil_fishinggrounds = np.array([sum(oil[included_ids]) for oil in self._Oillist])
 
 
 
     def photo(self, i, img_name):
-        el = self._Oillist[i]
+        '''
+        Generate an image from an iteration of the simulation
+
+        Parameteres:
+        i (int): The iteration at which the data in the image is from
+        img_name (string): The name and path of the image
+        '''
+
+        oil = self._Oillist[i]
         
         plt.figure()
 
         # Create the colormap
         sm = plt.cm.ScalarMappable(cmap='viridis')
-        sm.set_array([el])
-        umax = max(el)
-        umin = min(el)
+        sm.set_array([oil])
+        umax = max(oil)
+        umin = min(oil)
 
         # Add colorbar using a separate axis
         cbar_ax = plt.gca().inset_axes([1, 0, 0.05, 1]) # adjust position and size as needed
-        plt.colorbar(sm, cax=cbar_ax, label='label3')
+        plt.colorbar(sm, cax=cbar_ax, label='Amount of oil')
 
-        # Need for-loop
-        for cell, amount in zip(self._msh.cells, el):
+        # Coloring the cell
+        for cell, amount in zip(self._msh.cells, oil):
             coords = self._msh.coords[cell.points]
             plt.gca().add_patch(plt.Polygon(coords, color=plt.cm.viridis((amount - umin)/(umax - umin)), alpha=0.9))
 
-
-        # plt.gca().add_patch(plt.Polygon(triangle1, color=plt.cm.viridis((u[0] - umin)/(umax - umin)), alpha=0.9))
-        # plt.gca().add_patch(plt.Polygon(triangle2, color=plt.cm.viridis((u[1] - umin)/(umax - umin)), alpha=0.9))
-
         # Add labels to axes
-        plt.xlabel('label1')
-        plt.ylabel('label2')
+        plt.xlabel('X')
+        plt.ylabel('Y')
         plt.xlim(0, 1) # set the x-axis limits
         plt.ylim(0, 1) # set the y-axis limits
         plt.gca().set_aspect('equal')
 
-        # Show plot
+        # Show and save plot
         plt.savefig(f"{self._resfoldname}/{img_name}")
         plt.close()
 
     def photos(self, intv):
+        '''
+        Calling the photo generating method with an timestep interval
+
+        Parameteres
+        intv (int): interval between photos generated
+        '''
         self._intv = intv
         for i in range(0, self._frames, intv):
             self.photo(i, f'frames_in_video/img_{i}.png')
-            print(f"Generated photo for step {i}")
+            print(f"Generated photo for timestep {i}")
 
 
     def makevideo(self):
+        '''
+        Generating a video of the oil distrubution over time
+        '''
+        # Defining the framerate
         self._framerate = (self._frames / self._intv) / (self._time * 10)
         # Get the list of image files in the directory
         images = [f"{self._resfoldname}/frames_in_video/img_{i}.png" for i in range(0, self._frames, self._intv)]
@@ -155,9 +170,9 @@ class Simulation():
         frame = cv2.imread(images[0])
         height, width, layers = frame.shape
 
-        ## Define the codec and create a VideoWriter object
+        # Define the codec and create a VideoWriter object
         fourcc = cv2.VideoWriter_fourcc(*'mp4v') # or 'XVID', 'DIVX', 'mp4v' etc.
-        video = cv2.VideoWriter(f"{self._resfoldname}/video.AVI", fourcc, self._framerate, (width, height))
+        video = cv2.VideoWriter(f"{self._resfoldname}/oil_distrubution.mp4", fourcc, self._framerate, (width, height))
 
         for image in images:
             video.write(cv2.imread(image))
@@ -166,6 +181,12 @@ class Simulation():
         video.release()
     
     def make_log(self, logfile='logfile.log'):
+        '''
+        Writing a log for the simulation
+
+        Parameters:
+        logfile (string): The name of the logfile
+        '''
         logger = log.getLogger(__name__)
         logplace = f"{self._resfoldname}/{logfile}"
         handler = log.FileHandler(str(logplace), mode='w')
@@ -201,15 +222,28 @@ t = {step:#.5g}:     {self._oil_fishinggrounds[i]:#.5g}'''
         logger.info(information)
 
     def txtprinter(self, filename):
+        '''
+        Printing out the final oil distrubution
+
+        Parameteres:
+        filename (string): The name of the file which the distrubution is goinig to be printed to
+        '''
         with open(self._resfoldname+'/'+filename, 'w') as writer:
             for i in self._Oillist[-1]:
                 writer.write(f"{i}\n")
     
     def restorerun(self, restartFile):
+        '''
+        Storing the starting amount of oil for each cell from a text file
+
+        Parameteres:
+        restartFile (string): The name of the file which the oil distrubution is gathered from
+        '''
         self._restartFile = restartFile
         with open(restartFile, 'r') as file:
             startoil = file.readlines()
             try:
                 self._Oillist = np.array([[float(line) for line in startoil]])
+                assert len(self._msh.cells) == len(self._Oillist[1])
             except:
                 raise TypeError('There is something wrong with the restartFile')

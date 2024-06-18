@@ -17,19 +17,29 @@ class Line_cell(Cell):
         super().__init__(cell_id, points)
     
     def find_midpoint(self, coords):
+        '''
+        Calling the parent method
+        '''
         super().find_midpoint(coords)
     
     def find_vel(self):
+        '''
+        Calling the parent method
+        '''
         super().find_vel()
 
 
 class Triangle_cell(Cell):
-    # The super() makes it so that this class inherites the method
-    # from the parent class
+    '''
+    A child class which inherites properties of the parent class Cell
+    A class for cells that happens to be triangles
+    '''
     def __init__(self, cell_id, points):
+        '''
+        Calling the parent method and defining aditional empty/None attributes to be used later
+        '''
         super().__init__(cell_id, points)
         self._area = None
-        # The id's get stored as int
         self._neighbours_id = np.array([], dtype='int32')
         self._neighbours_points = np.array([])
         self._nuvectors = np.array([])
@@ -38,9 +48,15 @@ class Triangle_cell(Cell):
 
     
     def find_midpoint(self, coords):
+        '''
+        Calling the parent method
+        '''
         super().find_midpoint(coords)
     
     def find_vel(self):
+        '''
+        Calling the parent method
+        '''
         super().find_vel()
     
     def store_neighbours(self, cells):
@@ -106,38 +122,46 @@ class Triangle_cell(Cell):
         and the neighbour which it shares the side with.
         '''
         self._dot = [el[0] @ el[1] for el in zip(self._v_avgs, self._nuvectors)]
-        
-
-    # @property makes it such that you can acses the attributes but
-    # not change them 
+     
     @property
     def area(self):
+        '''
+        Getter to provid the variable area
+        '''
         return self._area
     
     @property
     def neighbours_id(self):
+        '''
+        Getter to provid the variable neighbours_id
+        '''
         return self._neighbours_id
-    """
-    @neighbours_id.setter
-    def neighbours_id(self, id):
-        if isinstance(id, int):
-            return self._neighbours_id
-    """
 
     @property
     def neighbours_points(self):
+        '''
+        Getter to provid the variable neighbous_points
+        '''
         return self._neighbours_points
     
     @property
     def nuvectors(self):
+        '''
+        Getter to provid the variable nuvectors
+        '''
         return self._nuvectors
     
     @property
     def v_avgs(self):
+        '''
+        Getter to provid the variable v_avgs
+        '''
         return self._v_avgs
-    
     
     @property
     def dot(self):
+        '''
+        Getter to provid the variable dot
+        '''
         return self._dot
     

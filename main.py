@@ -74,7 +74,7 @@ def toml_input(pth):
       sim.photo(frames-1, 'final_oil_distrubution')
       print("A photo of the final step has been generated")
 
-      # If we 
+      # If we have been given 
       if photo_steps != None:
          Path(resfold+'/frames_in_video').mkdir()
          sim.photos(photo_steps)

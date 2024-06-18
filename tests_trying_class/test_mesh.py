@@ -11,25 +11,6 @@ def advanced_mesh():
     mesh.append(Mesh('simple_mesh_2.msh'))
     return mesh
 
-@pytest.mark.parametrize('mesh, lengths_cells', [('simple.msh', 488), ('simple_mesh.msh', 8), ('simple_mesh_2.msh', 2)])
-class test_mesh:
-    def __init__(self, mesh, lengths_cells):
-        self._mesh = Mesh(mesh)
-        self._lengths_cells = lengths_cells
-
-    def test_mesh_cells_length(self, lengths_cells):
-        assert len(self._mesh.cells) == lengths_cells
-
-
-    
-
-        
-    
-
-    
-
-
-
 @pytest.mark.parametrize('lengths', [([488, 8, 22])])
 def test_mesh_cells_length(advanced_mesh, lengths):
     for mesh, length in zip(advanced_mesh, lengths):
@@ -118,7 +99,7 @@ def test_mesh_neighbours_points(advanced_mesh, ids, list_neigh_points):
                                                [[-0.07797692, -0.00362369], [0.04246173, 0.07263912], [0.03551519, -0.06901542]],
                                                [[-0.05890839, 0.04355665], [-0.01001779, -0.07496981], [0.06892617, 0.03141315]]],
                                               [[[0, 1], [-0.5, -0.5], [0.5, -0.5]],
-                                               [[0.5, 0.5], [-1 -0], [0.5, -0.5]],
+                                               [[0.5, 0.5], [-1, -0], [0.5, -0.5]],
                                                [[-0.5, 0.5], [0.5, 0.5], [0, -1]]],
                                               [[[-0.08125, -0.33125], [-0.27291667, 0.26875], [0.35416667, 0.0625]],
                                                [[-0.125, -0.375], [-0.21875, 0.28125], [0.34375, 0.09375]],

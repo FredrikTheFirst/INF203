@@ -40,18 +40,27 @@ class Cell:
     @property
     def id(self):
         '''
-        Getter to prvid the variable id
+        Getter to provid the variable id
         '''
         return self._id
     
     @property
     def points(self):
+        '''
+        Getter to provid the variable points
+        '''
         return self._points
     
     @property
     def midpoint(self):
+        '''
+        Getter to provid the variable midpoint
+        '''
         return self._midpoint
     
     @property
     def v(self):
+        '''
+        Getter to provid the variable v
+        '''
         return self._v
