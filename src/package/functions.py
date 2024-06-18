@@ -18,7 +18,8 @@ def v(x):
 
 def g_arr(a, b, dot):
     '''
-    The g-function from the task description
+    The g-function from the task description. If dot is positive we get the product a*dot
+    if not we get the product b*dot.
 
     Parameters:
     a (float): The first number, positive

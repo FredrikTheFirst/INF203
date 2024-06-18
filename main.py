@@ -3,6 +3,9 @@ import argparse
 import re
 from pathlib import Path
 from src.package.solver import *
+'''
+This file is run to make an simulation of an oils pill
+'''
 
 
 def toml_input(pth):
@@ -47,7 +50,7 @@ def toml_input(pth):
       if not Path(mesh_file).is_file():
          raise ImportError(f'Could not find the file "{mesh_file}"')
 
-
+      # Getting the name of the toml file
       file_name = only_name(pth)
 
       # Create a folder called results if it dosn`t already exists
@@ -68,13 +71,16 @@ def toml_input(pth):
             raise ImportError(f'Could not find the file "{mesh_file}"')
          sim.restorerun(restartFile)
       print(f"Starting oil simulation for file {pth}")
+      # Running the simulation
       sim.runsim(frames, t_start, t_end)
       print("Generated all oil for the given time interval")
+      # Calculating the amount of oil in the fishinggrounds
       sim.fishinggrounds()
+      # Getting the last photo from the simulation
       sim.photo(frames-1, 'final_oil_distrubution')
       print("A photo of the final step has been generated")
 
-      # If we have been given 
+      # If we have been given the parameter writeFrequency we make photos which we can make a video from
       if photo_steps != None:
          Path(resfold+'/frames_in_video').mkdir()
          sim.photos(photo_steps)
@@ -83,6 +89,7 @@ def toml_input(pth):
       else:
          print("No video was generated, because no writeFrequency parameter was given in the toml-file")
 
+      # User writing in a name for the file containing the final oil disturbution if they want that file
       saveFile = input("What would you like to name the solution-file of your code? (leave blank for no solution-file): ")
       saveFile = only_name(saveFile)
       if len(saveFile) != 0:
@@ -91,6 +98,7 @@ def toml_input(pth):
       else:
          print("No solution file was added to the input folder")
       
+      # Making a log of the simulation
       if log_name == None:
          log_name = 'logfile'
       log_name = only_name(log_name)+'.log'
@@ -107,7 +115,7 @@ def parse_input():
     string: A path which was defined by the command line input
     '''
     parser = argparse.ArgumentParser(description='Use this program to simulate an oil spill')
-    parser.add_argument('-p', '--pth', default='“input.toml', help='Prvide a toml file or a folder containing one or multiple toml files')
+    parser.add_argument('-p', '--pth', default='input.toml', help='Prvide a toml file or a folder containing one or multiple toml files')
 
     args = parser.parse_args()
     pth = args.pth
