@@ -48,7 +48,7 @@ def toml_input(pth):
          raise ValueError('"t_end" should be larger then "t_start" in the toml file')
       
       if not Path(mesh_file).is_file():
-         raise ImportError(f'Could not find the file "{mesh_file}"')
+         raise ImportError('Could not find the mesh file')
 
       # Getting the name of the toml file
       file_name = only_name(pth)
@@ -68,7 +68,7 @@ def toml_input(pth):
       # If we have been given a restarFile wethrow an error if we can`t find it
       if restartFile != None:
          if not Path(restartFile).is_file():
-            raise ImportError(f'Could not find the file "{mesh_file}"')
+            raise ImportError('Could not find the mesh file')
          sim.restorerun(restartFile)
       print(f"Starting oil simulation for file {pth}")
       # Running the simulation
