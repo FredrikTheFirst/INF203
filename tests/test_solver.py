@@ -7,15 +7,15 @@ This file is for testing the methodes and attributes of the Simulation class fro
 @pytest.fixture
 def advanced_sim():
     '''
-    Defining a list om Mesh objects
+    Defining a list om Simulation objects
 
     Returns:
-    list: a list of Mesh objects
+    list: a list of Simulation objects
     '''
     sim = []
-    sim.append(Simulation('simple.msh', 'results/tests/simple', [[0.0, 0.45], [0.0, 0.2]]))
-    sim.append(Simulation('simple_mesh.msh', 'results/tests/simple_mesh', [[0.2, 0.4], [0.2, 0.4]]))
-    sim.append(Simulation('simple_mesh_2.msh', 'results/tests/simple_mesh_2', [[0.0, 1], [0.5, 0.75]]))
+    sim.append(Simulation('tests_files/simple.msh', 'results/tests/simple', [[0.0, 0.45], [0.0, 0.2]]))
+    sim.append(Simulation('tests_files/simple_mesh.msh', 'results/tests/simple_mesh', [[0.2, 0.4], [0.2, 0.4]]))
+    sim.append(Simulation('tests_files/simple_mesh_2.msh', 'results/tests/simple_mesh_2', [[0.0, 1], [0.5, 0.75]]))
     return sim
 
 @pytest.mark.parametrize('boarders', [([[[0.0, 0.45], [0.0, 0.2]], [[0.2, 0.4], [0.2, 0.4]], [[0.0, 1], [0.5, 0.75]]])])

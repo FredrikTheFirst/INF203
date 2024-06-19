@@ -1,10 +1,10 @@
-# Group32PettersenHaugen
-####
+# Oil spill simulation
+#### By Group32
 
 ### Description:
 
-This project contains a package which is used to simulate an oil spill.
-To use this package to simulate an oil spill you can run the main.py file with the command line.
+This project contains a package which is used to simulate oil spills. 
+The package is created to see how much oil enters into fishinggrounds, and is specifically designed to simulate how much oil has entered into the fishinggrounds by bay City. The geometry of lake by bay City is given by the mesh "bay.msh". If the file main.py is used to run the simulation the results will be stored in a folder which itself is stored in the folder results (If results doesn't exist the folder will be genereted).
 
 
 
@@ -16,12 +16,22 @@ To use this package to simulate an oil spill you can run the main.py file with t
 4) mesh.py
 5) solver.py
 
-Executing program:
+### Executing program:
 
-To use this package to simulate an oil spill you can run the main.py file with the command line.
-For it to main.py to run you need an toml file with the right structure
+You can run a simulation by running the file main.py in the command line, with the command line argument -p or --pth. This argument excpects a toml file or a folder containing one or more toml files. Examples below.
+```sh
+python main.py -p file.toml
+```
+```sh
+python main.py -p folder_with_toml_files
+```
+If no -p or --pth argument is given the main.py code will use the file input.toml
 
-Structure toml file:
+
+
+### Structure toml file:
+The toml file(s) is expected to have the structure below. Remember that if 'tStart' is not provided the simulation will not use the values from 'restartFile'.
+
 
 [settings]
 <br>
@@ -39,11 +49,27 @@ boarders = [[0.0, 0.45], [0.0, 0.2]] # `Required` Boarders of the fishinggrounds
 
 [IO]
 <br>
-logName = "log" # Name of logfile that are 
+logName = "log" # Name of the logfile that is prodused
 <br>
-writeFrequency = 10 # The frequency of vido of simulation
+writeFrequency = 10 # The frequency of output video.
 <br>
-restartFile = "input/solution.txt"
+restartFile = "input/solution.txt" # Name of restart File
 
-Tests
+### Tests
 
+The folder tests contains four test file which tests if the package works correctly
+
+1) test_cellChild.py
+2) test_functions.py
+3) test_mesh.py
+4) test_solver
+
+For these tests to function the files below need to be in the folder 'tests_files'
+
+- simple.msh
+- simple_mesh.msh
+- simple_mesh_2.msh
+- restart_file.txt
+- restart_file_21.txt
+- restart_file_22.txt
+- restart_file_23.txt

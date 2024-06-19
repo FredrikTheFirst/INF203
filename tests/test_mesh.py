@@ -7,15 +7,15 @@ This file is for testing the methodes and its attributes of the Mesh class from 
 @pytest.fixture
 def advanced_mesh():
     '''
-    Defining a list om Mesh objects
+    Defining a list of Mesh objects
 
     Returns:
     list: a list of Mesh objects
     '''
     mesh = []
-    mesh.append(Mesh('simple.msh'))
-    mesh.append(Mesh('simple_mesh.msh'))
-    mesh.append(Mesh('simple_mesh_2.msh'))
+    mesh.append(Mesh('tests_files/simple.msh'))
+    mesh.append(Mesh('tests_files/simple_mesh.msh'))
+    mesh.append(Mesh('tests_files/simple_mesh_2.msh'))
     return mesh
 
 @pytest.mark.parametrize('lengths', [([488, 8, 22])])
