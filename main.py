@@ -41,7 +41,7 @@ def toml_input(pth):
          if parameter == None:
             raise NameError('The toml file is missing enteries')
 
-      if t_end < t_start:
+      if t_start != None and t_end < t_start:
          raise ValueError('"t_end" should be larger then "t_start" in the toml file')
       
       if not Path(mesh_file).is_file():
