@@ -1,0 +1,13 @@
+[settings]
+nSteps = 1000
+tStart = 0
+tEnd = 1.0
+
+[geometry]
+meshName = "bay.msh"
+boarders = [ [0.0, 0.45], [0.0, 0.2] ]
+
+[IO]
+logName = "exampleLog"
+writeFrequency = 10
+# restartFile = "input/solution.txt"

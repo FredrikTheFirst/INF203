@@ -1,22 +1,59 @@
 import meshio
 import numpy as np
 from src.package.cellChild import *
-
+'''
+This module reads in a .msh and establishes the cells
+'''
 
 class Cell_factory:
+    '''
+    A factory class to help define cell objects
+    '''
     def __init__(self):
+        '''
+        Stores an empty dictionary as an attribute
+        '''
         self._cell_types = {}
     
     def register(self, key, name):
+        '''
+        Filling in the _cell_types (dictionary) attribute
+
+        Parameteres:
+        key (float): A string which can be used to get the variable name
+        name (type): The class name with which we can make an object
+        '''
         self._cell_types[key] = name
 
     def __call__(self, cell, cell_id, celltype):
+        '''
+        Calling a class from the attribute _cell_types and creating an object
+
+        Paremeters:
+        cell (list): A list of the points of the cells
+        cell_id (int): The id of the cell
+        celltype (string): Which type of cell this is. Used to get the class name from the dictionary
+
+        Returns:
+        obj: A cell of a certian type with some of the parameters as attributes
+        '''
         denne_cellen = self._cell_types[celltype](cell_id, cell)
         return denne_cellen
 
 
 class Mesh():
+    '''
+    The object which is going to contain cells and coordinates in an organized fashion
+    as well as defining properties of the cells
+    '''
     def __init__(self, mesh_file):
+        '''
+        Read a .msh file and store its information
+
+        Paramteres
+        mesh_file (string): Name of the .msh file
+        '''
+
         # Register the different types of cell (line and triangle)
         factory = Cell_factory()
 
@@ -50,26 +87,68 @@ class Mesh():
                     self._cells.append(cell_obj)
                     cell_id += 1
 
-    # A method to get a list of only the triangel cells
     def get_triangles(self):
+        '''
+        Makes a list of just the triangle cells
+
+        Return:
+        list: The mesh`s triangle cells
+        '''
         return [cell for cell in self._cells if type(cell).__name__ == 'Triangle_cell']
-    
-    # Computing the area of each triangel cell
+
     def triangel_area(self):
+        '''
+        Calling the cell method that finds the area of each triangle
+        '''
         for cell in self.get_triangles():
             cell.find_area(self._coords[cell.points])
     
-    # Computing the midpoint of all cells
     def cell_midpoint(self):
+        '''
+        Calling the cell method that finds the midpoint of each cell
+        '''
         for cell in self._cells:
             cell.find_midpoint(self._coords[cell.points])
 
-    # Register the neighbours of all cells
     def find_neighbours(self):
+        '''
+        Calling the cell method that finds and stores the neighbours of each triangle
+        '''
         cells = self._cells.copy()
-        for id, tri in enumerate(self.get_triangles()):
-            tri.store_neighbours(cells)
+        for tri in self.get_triangles():
             cells.remove(tri)
+            tri.store_neighbours(cells)
+    
+    def find_nuvectors(self):
+        '''
+        Calling the cell method that finds the outward pointing vector for a side of the each triangle
+        with the absolute vale equal to the length of the side. This vector is called the nuvector
+        '''
+        for cell in self.get_triangles():
+            cell.find_nuvecs(self._coords)
+    
+    def find_vel_vec(self):
+        '''
+        Calling the cell method that finds the velocity for each cell
+        '''
+        for cell in self.cells:
+            cell.find_vel()
+
+    def find_vel_vec_avg(self):
+        '''
+        Calling the cell method that finds the average between the triangle`s velocity
+        and each of it`s neighbour`s velocities
+        '''
+        for tri in self.get_triangles():
+            tri.find_avg_v(self._cells)
+            
+    def calc_dot_prod(self):
+        '''
+        Calling the methodes that finds the dotproducts between each side`s nuvector and the average of the velocites between the triangle
+        and the neighbour which it shares the side with.
+        '''
+        for tri in self.get_triangles():
+            tri.dodotprods()
     
     @property
     def cells(self):

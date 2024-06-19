@@ -3,3 +3,8 @@ numpy
 matplotlib
 opencv-python
 pytest
+toml
+argparse
+logging
+re
+pathlib
