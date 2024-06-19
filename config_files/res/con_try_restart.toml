@@ -10,4 +10,4 @@ boarders = [ [0.0, 0.45], [0.0, 0.2] ]
 [IO]
 logName = "res_log"
 writeFrequency = 50
-restartFile = "solution.txt"
+# restartFile = "input/solution.txt"

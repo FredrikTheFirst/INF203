@@ -5,9 +5,9 @@ tEnd = 0.6
 
 [geometry]
 meshName = "bay.msh"
-boarders = [ [0.0, 0.45], [0.0, 0.2] ]
+boarders = [ [0.0, 0.45], [0.0, 0.2]]
 
 [IO]
 logName = "log"
-writeFrequency = 50
-# restartFile = "input/solution.txt"
+writeFrequency = 10
+restartFile = "input/solution.txt"
