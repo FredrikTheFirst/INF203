@@ -1,7 +1,10 @@
 import pytest
 import numpy as np
 from src.package.cellChild import *
-
+'''
+This file is for testing the methodes and attributes of
+the Line_cell class and the Triangle_cell class from the module cellChild
+'''
 
 #%% Testing the methodes and attributes of Line_cell and triangle_cell which they have innherited from Cell
 
@@ -10,6 +13,12 @@ coords = np.array([[9, 3.25], [7.4, 4.8], [4.4, 1.6], [1, 0], [0, 1], [0, 0], [1
 
 @pytest.fixture
 def advanced_Line_cell():
+    '''
+    Defining a list om Line_cell objects
+
+    Returns:
+    list: a list of Line_cell objects
+    '''
     cells = []
     cells.append(Line_cell(1, [1, 2]))
     cells.append(Line_cell(5, [4, 5]))
@@ -18,6 +27,12 @@ def advanced_Line_cell():
 
 @pytest.fixture
 def advanced_Triangle_cell():
+    '''
+    Defining a list om Triangle_cell objects
+
+    Returns:
+    list: a list of Triangle_cell objects
+    '''
     cells = []
     cells.append(Triangle_cell(0, [0, 1, 2]))
     cells.append(Triangle_cell(2, [3, 4, 5]))
@@ -102,7 +117,7 @@ def test_cell_v(advanced_Line_cell, advanced_Triangle_cell, list_line_v, list_tr
                 assert cell_coord == pytest.approx(v_coord)
 
 #%% Testing the methodes and attributes unique to triangle_cell
-# Line_cell does not have any unique methodes or attributes
+# Line_cell does not have any methodes or attributes not inherited from Cell
 
 
 @pytest.mark.parametrize('list_area, coords', [([4.884999999999999, 0.5, 1.1949999999999983],
@@ -147,7 +162,7 @@ def test_triangle_neighbours_id(advanced_Line_cell, advanced_Triangle_cell, list
                                                np.array([{6, 7}])])])
 def test_triangle_neighbours_points(advanced_Line_cell, advanced_Triangle_cell, list_neighbours):
     '''
-    Testing if the points shared between the Triangles and it`s neighbours are found and stored corectly
+    Testing if the points shared between the Triangles and it`s neighbours are found and stored correctly
     
     Parameteres:
     advanced_Line_cell (list): A list containing Line_cell`s
@@ -171,7 +186,7 @@ def test_triangle_neighbours_points(advanced_Line_cell, advanced_Triangle_cell, 
                                                    coords)])
 def test_triangle_nuvectors(advanced_Line_cell, advanced_Triangle_cell, list_vectors, coords):
     '''
-    Testing if each triangle`s nuvectors are calculated and stored corectly
+    Testing if each triangle`s nuvectors are calculated and stored correctly
     
     Parameteres:
     advanced_Line_cell (list): A list containing Line_cell`s
@@ -198,7 +213,7 @@ def test_triangle_nuvectors(advanced_Line_cell, advanced_Triangle_cell, list_vec
                                                    coords)])
 def test_find_avg_v(advanced_Line_cell, advanced_Triangle_cell, list_vectors, coords):
     '''
-    Testing if each triangle`s v_avgs-attribute is calculated and stored corectly
+    Testing if each triangle`s v_avgs-attribute is calculated and stored correctly
     
     Parameteres:
     advanced_Line_cell (list): A list containing Line_cell`s
@@ -227,7 +242,7 @@ def test_find_avg_v(advanced_Line_cell, advanced_Triangle_cell, list_vectors, co
                                                   coords)])
 def test_dotprods(advanced_Line_cell, advanced_Triangle_cell, list_dotprods, coords):
     '''
-    Testing if each triangle`s dotproducts are calculated and stored corectly
+    Testing if each triangle`s dotproducts are calculated and stored correctly
     
     Parameteres:
     advanced_Line_cell (list): A list containing Line_cell`s
