@@ -40,9 +40,6 @@ def toml_input(pth):
       for parameter in (mesh_file, frames, t_end, boarders):
          if parameter == None:
             raise NameError('The toml file is missing enteries')
-      
-      if t_start == None:
-         t_start = 0
 
       if t_end < t_start:
          raise ValueError('"t_end" should be larger then "t_start" in the toml file')
@@ -65,11 +62,15 @@ def toml_input(pth):
 
       # Begin simulation
       sim = Simulation(mesh_file, resfold, boarders)
-      # If we have been given a restarFile wethrow an error if we can`t find it
-      if restartFile != None:
-         if not Path(restartFile).is_file():
-            raise ImportError('Could not find the mesh file')
-         sim.restorerun(restartFile)
+      # If we have been given a start time we throw an error if we can`t find the restart file
+      if t_start != None:
+         if restartFile == None or not Path(restartFile).is_file():
+            raise ImportError('Could not find the restart file')
+         else:
+            sim.restorerun(restartFile)
+      else:
+         t_start = 0
+
       print(f"Starting oil simulation for file {pth}")
       # Running the simulation
       sim.runsim(frames, t_start, t_end)
