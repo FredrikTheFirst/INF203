@@ -6,5 +6,5 @@ pytest
 toml
 argparse
 logging
-re
+regex
 pathlib
